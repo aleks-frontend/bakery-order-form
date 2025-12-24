@@ -3,44 +3,155 @@
 <head>
   <meta charset="UTF-8" />
   <title>Bakery Order</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 700px;
-      margin: 2rem auto;
-    }
-    label {
-      display: block;
-      margin-top: 1rem;
-    }
-    input, select, button {
-      padding: 0.5rem;
-      margin-top: 0.25rem;
-      width: 100%;
-    }
+  :root {
+    --bg: #fdf6ec;
+    --card: #ffffff;
+    --primary: #c68642;
+    --primary-hover: #b87736;
+    --border: #e6d8c3;
+    --text: #3d2f1e;
+    --shadow-focus: 0 0 0 4px rgba(198, 134, 66, 0.25);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 2rem;
+  }
+
+  h2 {
+    margin-top: 0;
+    text-align: center;
+  }
+
+  h3 {
+    margin-top: 24px;
+    text-align: left;
+  }
+
+  form {
+    background: var(--card);
+    padding: 2rem;
+    border-radius: 16px;
+    max-width: 720px;
+    margin: auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  }
+
+  label {
+    display: block;
+    margin-top: 1rem;
+    font-weight: 500;
+  }
+
+  input,
+  select {
+    margin-top: 0.4rem;
+    width: 100%;
+    padding: 0.65rem 0.75rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    font-size: 0.95rem;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+    background-color: #fff;
+  }
+
+  input:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: var(--shadow-focus);
+  }
+
+  .row {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    align-items: flex-end;
+  }
+
+  .row select {
+    flex: 2;
+  }
+
+  .row input[type="number"] {
+    flex: 1;
+  }
+
+  button {
+    border-radius: 12px;
+    border: none;
+    padding: 0.65rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.05s ease;
+  }
+
+  button:hover {
+    transform: translateY(-1px);
+  }
+
+  button:active {
+    transform: translateY(0);
+  }
+
+  button[type="submit"],
+  .add-btn {
+    background: var(--primary);
+    color: white;
+  }
+
+  button[type="submit"]:hover,
+  .add-btn:hover {
+    background: var(--primary-hover);
+  }
+
+  .add-article {
+    margin-top: 12px;
+  }
+
+  .remove-btn {
+    background: #fdecea;
+    color: #b91c1c;
+    border: 1px solid #f5c2c2;
+    padding: 0.55rem 0.7rem;
+  }
+
+  .remove-btn:hover {
+    background: #fbd5d5;
+  }
+
+  .total {
+    margin-top: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: right;
+  }
+
+  .success {
+    margin-top: 1rem;
+    color: #2f7a3e;
+    font-weight: 500;
+  }
+
+  @media (max-width: 600px) {
     .row {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
+      flex-direction: column;
+      align-items: stretch;
     }
-    .row > * {
-      flex: 1;
-    }
-    .remove-btn {
-      background: #ffdddd;
-      border: 1px solid #cc0000;
-      cursor: pointer;
-    }
-    .total {
-      font-size: 1.2rem;
-      margin-top: 1rem;
-      font-weight: bold;
-    }
-    .success {
-      color: green;
-      margin-top: 1rem;
-    }
-  </style>
+  }
+</style>
+
 </head>
 <body>
 
@@ -71,7 +182,7 @@
 
   <div id="items"></div>
 
-  <button type="button" onclick="addItem()">➕ Add bread</button>
+  <button type="button" class="add-article" onclick="addItem()">➕ Add bread</button>
 
   <div class="total">
     Total price: <span id="totalPrice">0</span> RSD
