@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bakery Order</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 2rem auto;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+    input, select, button {
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+      width: 100%;
+    }
+    .row {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .row > * {
+      flex: 1;
+    }
+    .remove-btn {
+      background: #ffdddd;
+      border: 1px solid #cc0000;
+      cursor: pointer;
+    }
+    .total {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    .success {
+      color: green;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<h2>🥖 Bakery Order Form</h2>
+
+<form id="orderForm">
+  <label>
+    First name
+    <input type="text" id="firstName" required />
+  </label>
+
+  <label>
+    Last name
+    <input type="text" id="lastName" required />
+  </label>
+
+  <label>
+    Phone number
+    <input type="tel" id="phone" required />
+  </label>
+
+  <label>
+    Email (optional)
+    <input type="email" id="email" />
+  </label>
+
+  <h3>Ordered bread</h3>
+
+  <div id="items"></div>
+
+  <button type="button" onclick="addItem()">➕ Add bread</button>
+
+  <div class="total">
+    Total price: <span id="totalPrice">0</span> RSD
+  </div>
+
+  <button type="submit" style="margin-top: 1rem;">Submit order</button>
+
+  <div id="result" class="success"></div>
+</form>
+
+<script>
+const BREAD_TYPES_URL = "https://YOUR_N8N_DOMAIN/webhook/bread-types";
+const ORDER_SUBMIT_URL = "https://YOUR_N8N_DOMAIN/webhook/bakery-order";
+
+let breadTypes = [];
+
+/**
+ * Example fallback data if fetch fails
+ */
+const fallbackBreadTypes = [
+  { id: "white_500", name: "White bread 500g", price: 120 },
+  { id: "rye_700", name: "Rye bread 700g", price: 180 }
+];
+
+async function loadBreadTypes() {
+  try {
+    const res = await fetch(BREAD_TYPES_URL);
+    breadTypes = await res.json();
+  } catch {
+    breadTypes = fallbackBreadTypes;
+  }
+}
+
+function addItem() {
+  const container = document.getElementById("items");
+
+  const row = document.createElement("div");
+  row.className = "row";
+
+  const select = document.createElement("select");
+  breadTypes.forEach(b => {
+    const opt = document.createElement("option");
+    opt.value = b.id;
+    opt.dataset.price = b.price;
+    opt.textContent = `${b.name} (${b.price} RSD)`;
+    select.appendChild(opt);
+  });
+
+  const qty = document.createElement("input");
+  qty.type = "number";
+  qty.min = 1;
+  qty.value = 1;
+
+  const remove = document.createElement("button");
+  remove.type = "button";
+  remove.textContent = "✖";
+  remove.className = "remove-btn";
+  remove.onclick = () => {
+    row.remove();
+    calculateTotal();
+  };
+
+  select.onchange = calculateTotal;
+  qty.oninput = calculateTotal;
+
+  row.append(select, qty, remove);
+  container.appendChild(row);
+
+  calculateTotal();
+}
+
+function calculateTotal() {
+  let total = 0;
+
+  document.querySelectorAll("#items .row").forEach(row => {
+    const select = row.querySelector("select");
+    const qty = row.querySelector("input");
+    const price = Number(select.selectedOptions[0].dataset.price);
+    total += price * Number(qty.value || 0);
+  });
+
+  document.getElementById("totalPrice").textContent = total;
+}
+
+document.getElementById("orderForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const items = [...document.querySelectorAll("#items .row")].map(row => {
+    const select = row.querySelector("select");
+    const qty = Number(row.querySelector("input").value);
+    const bread = breadTypes.find(b => b.id === select.value);
+
+    return {
+      breadId: bread.id,
+      breadName: bread.name,
+      quantity: qty,
+      unitPrice: bread.price,
+      total: bread.price * qty
+    };
+  });
+
+  const payload = {
+    customer: {
+      firstName: firstName.value,
+      lastName: lastName.value,
+      phone: phone.value,
+      email: email.value || null
+    },
+    items,
+    totalPrice: Number(totalPrice.textContent),
+    submittedAt: new Date().toISOString()
+  };
+
+  const res = await fetch(ORDER_SUBMIT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  if (res.ok) {
+    orderForm.reset();
+    itemsDiv = document.getElementById("items");
+    itemsDiv.innerHTML = "";
+    addItem();
+    document.getElementById("result").textContent = "✅ Order submitted successfully!";
+    calculateTotal();
+  }
+});
+
+(async function init() {
+  await loadBreadTypes();
+  addItem();
+})();
+</script>
+
+</body>
+</html>
