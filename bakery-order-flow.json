@@ -1,0 +1,278 @@
+{
+    "name": "Bakery order form",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "bakery-order",
+          "responseMode": "responseNode",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "name": "Access-Control-Allow-Methods",
+                  "value": "POST"
+                }
+              ]
+            }
+          }
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -576,
+          -32
+        ],
+        "id": "4acac2da-4116-4cf3-b57e-86af72691ad8",
+        "name": "Webhook",
+        "webhookId": "a5bfa179-7dd5-4a2f-964c-93ff85f004ac"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1Zgbc0MhfBP2Kn7b9tVgWB2Hlu-Pl90d1KJ6UW21J30A",
+            "mode": "list",
+            "cachedResultName": "Bread types",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Zgbc0MhfBP2Kn7b9tVgWB2Hlu-Pl90d1KJ6UW21J30A/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Sheet1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Zgbc0MhfBP2Kn7b9tVgWB2Hlu-Pl90d1KJ6UW21J30A/edit#gid=0"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          -288,
+          -32
+        ],
+        "id": "ca11beb4-b6c6-479c-be24-1b5cefcf71aa",
+        "name": "Get row(s) in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "TOsSRG17lqyy57dx",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const order = $('Webhook').first().json.body;\nconst breadRows = $input.all().map(i => i.json);\n\n// Build lookup table\nconst breadMap = {};\nbreadRows.forEach(b => {\n  if (b.available === true) {\n    breadMap[b.id] = {\n      name: b.name,\n      price: Number(b.price)\n    };\n  }\n});\n\n// Validate items\nlet total = 0;\nconst orderedArticlesText = [];\n\norder.items.forEach(item => {\n  const bread = breadMap[item.breadId];\n  if (!bread) {\n    console.log(item, \"item with error\")\n    throw new Error(`Bread not available: ${item.breadId}`);\n  }\n\n  const itemTotal = bread.price * item.quantity;\n  total += itemTotal;\n\n  orderedArticlesText.push(\n    `• ${bread.name} × ${item.quantity} = ${itemTotal} RSD`\n  );\n});\n\nreturn [\n  {\n    json: {\n      orderId: `ORD-${Date.now()}`,\n      recipient: `${order.customer.firstName} ${order.customer.lastName}`,\n      phone: order.customer.phone,\n      location: order.location,\n      date: new Date().toLocaleString(\"en-GB\", {\n        day: \"2-digit\",\n        month: \"short\",\n        year: \"numeric\",\n        hour: \"2-digit\",\n        minute: \"2-digit\",\n      }),\n      orderedArticles: orderedArticlesText.join('\\n'),\n      totalPrice: total,\n      status: \"Not received\",\n      customerEmail: order.customer.email || null\n    }\n  }\n];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -80,
+          -32
+        ],
+        "id": "3f2894b6-c0fa-4777-84d5-bbfa75dbb3f4",
+        "name": "Validate prices and availability"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1mWzaNO9ikwyuLhwCG1dwxxcBx-T4Q_0Hmbvffr3ZOM4",
+            "mode": "list",
+            "cachedResultName": "Bread orders",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mWzaNO9ikwyuLhwCG1dwxxcBx-T4Q_0Hmbvffr3ZOM4/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Sheet1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mWzaNO9ikwyuLhwCG1dwxxcBx-T4Q_0Hmbvffr3ZOM4/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Order ID": "={{ $json.orderId }}",
+              "Recipient": "={{ $json.recipient }}",
+              "Phone": "={{ $json.phone }}",
+              "Date": "={{ $json.date }}",
+              "Location": "={{ $json.location }}",
+              "Ordered articles": "={{ $json.orderedArticles }}",
+              "Total price": "={{ $json.totalPrice }}",
+              "Status": "={{ $json.status }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "Order ID",
+                "displayName": "Order ID",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Recipient",
+                "displayName": "Recipient",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Phone",
+                "displayName": "Phone",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Date",
+                "displayName": "Date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Location",
+                "displayName": "Location",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Ordered articles",
+                "displayName": "Ordered articles",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Total price",
+                "displayName": "Total price",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Status",
+                "displayName": "Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          128,
+          -32
+        ],
+        "id": "c5c5bd9b-8133-479e-b65f-7d326b2d3a5d",
+        "name": "Append row in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "TOsSRG17lqyy57dx",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "{\n  \"success\": true,\n  \"orderId\": \"{{$json.orderId}}\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          336,
+          -32
+        ],
+        "id": "264a5045-89a3-4259-a808-9ee2b17565b0",
+        "name": "Respond to Webhook"
+      }
+    ],
+    "pinData": {},
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Get row(s) in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get row(s) in sheet": {
+        "main": [
+          [
+            {
+              "node": "Validate prices and availability",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Validate prices and availability": {
+        "main": [
+          [
+            {
+              "node": "Append row in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Append row in sheet": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": true,
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "versionId": "c1154e7b-3f91-414c-be73-b153b16e4352",
+    "meta": {
+      "templateCredsSetupCompleted": true,
+      "instanceId": "32046c7d7105c211e2259616606f883c8b5cc71035b30bdbb85dfac864d6105f"
+    },
+    "id": "iQQVUdYvSpCNVX01",
+    "tags": []
+  }
