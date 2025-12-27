@@ -344,6 +344,15 @@
         <input type="email" id="email" />
       </label>
 
+      <label>
+        Location
+        <select id="location" required>
+          <option value="">Select location</option>
+          <option value="subotica">Subotica</option>
+          <option value="hajdukovo">Hajdukovo</option>
+        </select>
+      </label>
+
       <h3>Ordered bread</h3>
 
       <div id="loadingSpinner" class="loading-spinner">
@@ -383,7 +392,14 @@
 
     <script>
       const BREAD_TYPES_URL = "https://n8n.aleksthecoder.com/webhook/bread-types";
-      const ORDER_SUBMIT_URL = "https://YOUR_N8N_DOMAIN/webhook/bakery-order";
+      const ORDER_SUBMIT_URL = "https://n8n.aleksthecoder.com/webhook/bakery-order";
+
+      // Form element selectors (global variables for DRY principle)
+      const firstNameEl = document.getElementById('firstName');
+      const lastNameEl = document.getElementById('lastName');
+      const phoneEl = document.getElementById('phone');
+      const emailEl = document.getElementById('email');
+      const locationEl = document.getElementById('location');
 
       let breadTypes = [
         { id: "white_500", name: "White bread 500g", price: 120 },
@@ -479,12 +495,18 @@
         const modal = document.getElementById("confirmationModal");
         const content = document.getElementById("modalContent");
         
+        const locationNames = {
+          subotica: 'Subotica',
+          hajdukovo: 'Hajdukovo'
+        };
+        
         let html = `
           <div style="margin-bottom: 1rem;">
             <strong>Customer:</strong><br>
             ${orderData.customer.firstName} ${orderData.customer.lastName}<br>
             ${orderData.customer.phone}
             ${orderData.customer.email ? `<br>${orderData.customer.email}` : ''}
+            ${orderData.location ? `<br><br><strong>Location:</strong> ${locationNames[orderData.location] || orderData.location}` : ''}
           </div>
           <div style="margin-bottom: 1rem;">
             <strong>Order Items:</strong>
@@ -532,7 +554,27 @@
 
           if (res.ok) {
             closeModal();
+            
+            // Save user data before resetting
+            const savedUserData = {
+              firstName: firstNameEl.value,
+              lastName: lastNameEl.value,
+              phone: phoneEl.value,
+              email: emailEl.value,
+              location: locationEl.value
+            };
+            
+            // Reset form (clears all fields)
             orderForm.reset();
+            
+            // Restore user data
+            firstNameEl.value = savedUserData.firstName;
+            lastNameEl.value = savedUserData.lastName;
+            phoneEl.value = savedUserData.phone;
+            emailEl.value = savedUserData.email;
+            locationEl.value = savedUserData.location;
+            
+            // Clear order items and add new item
             const itemsDiv = document.getElementById("items");
             itemsDiv.innerHTML = "";
             addItem();
@@ -583,16 +625,60 @@
             items,
             totalPrice: Number(totalPrice.textContent),
             submittedAt: new Date().toISOString(),
+            location: document.getElementById('location').value,
           };
+
+          // Save customer info to localStorage
+          const customerInfo = {
+            firstName: firstNameEl.value,
+            lastName: lastNameEl.value,
+            email: emailEl.value || '',
+            phone: phoneEl.value,
+            location: locationEl.value
+          };
+          localStorage.setItem('bakery-order', JSON.stringify(customerInfo));
+
 
           pendingOrderData = payload;
           showConfirmationModal(payload);
         });
 
+      function loadCustomerInfoFromStorage() {
+        const stored = localStorage.getItem('bakery-order');
+        if (stored) {
+          try {
+            const customerInfo = JSON.parse(stored);
+            
+            if (customerInfo.firstName) {
+              firstNameEl.value = customerInfo.firstName;
+            }
+            
+            if (customerInfo.lastName) {
+              lastNameEl.value = customerInfo.lastName;
+            }
+            
+            if (customerInfo.email) {
+              emailEl.value = customerInfo.email;
+            }
+            
+            if (customerInfo.phone) {
+              phoneEl.value = customerInfo.phone;
+            }
+            
+            if (customerInfo.location) {
+              locationEl.value = customerInfo.location;
+            }
+          } catch (error) {
+            console.error('Error loading customer info from localStorage:', error);
+          }
+        }
+      }
+
       (async function init() {
         await loadBreadTypes();
         document.getElementById("loadingSpinner").classList.add("hidden");
         document.getElementById("items").classList.remove("hidden");
+        loadCustomerInfoFromStorage();
         addItem();
         updateSubmitButtonState();
       })();
