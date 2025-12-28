@@ -326,48 +326,119 @@
         background: #d4c5b0;
       }
 
+      .language-selector {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        display: flex;
+        gap: 0.5rem;
+        z-index: 100;
+      }
+
+      .lang-btn {
+        width: 36px;
+        height: 36px;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        background: var(--card);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 0;
+      }
+
+      .lang-btn img {
+        width: 20px;
+        height: 13px;
+        object-fit: cover;
+        border-radius: 2px;
+        display: block;
+      }
+
+      .lang-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        border-color: var(--primary);
+      }
+
+      .lang-btn.active {
+        border-color: var(--primary);
+        background: var(--primary);
+        box-shadow: 0 0 0 3px rgba(198, 134, 66, 0.2);
+      }
+
       @media (max-width: 600px) {
         .row {
           flex-direction: column;
           align-items: stretch;
         }
+
+        .language-selector {
+          top: 0.5rem;
+          right: 0.5rem;
+        }
+
+        .lang-btn {
+          width: 32px;
+          height: 32px;
+        }
+
+        .lang-btn img {
+          width: 20px;
+          height: 15px;
+        }
       }
     </style>
   </head>
   <body>
-    <h2>🥖 Bakery Order Form</h2>
+    <div class="language-selector">
+      <button class="lang-btn" data-lang="sr" title="Serbian">
+        <img src="https://flagcdn.com/w20/rs.png" alt="Serbian" />
+      </button>
+      <button class="lang-btn" data-lang="hu" title="Hungarian">
+        <img src="https://flagcdn.com/w20/hu.png" alt="Hungarian" />
+      </button>
+      <button class="lang-btn active" data-lang="en" title="English">
+        <img src="https://flagcdn.com/w20/gb.png" alt="English" />
+      </button>
+    </div>
+
+    <h2 data-translate="pageTitle">🥖 Bakery Order Form</h2>
 
     <form id="orderForm">
       <label>
-        First name
+        <span data-translate="firstName">First name</span>
         <input type="text" id="firstName" required />
       </label>
 
       <label>
-        Last name
+        <span data-translate="lastName">Last name</span>
         <input type="text" id="lastName" required />
       </label>
 
       <label>
-        Phone number
+        <span data-translate="phoneNumber">Phone number</span>
         <input type="tel" id="phone" required />
       </label>
 
       <label>
-        Email (optional)
+        <span data-translate="emailOptional">Email (optional)</span>
         <input type="email" id="email" />
       </label>
 
       <label>
-        Location
+        <span data-translate="location">Location</span>
         <select id="location" required>
-          <option value="">Select location</option>
-          <option value="subotica">Subotica</option>
-          <option value="hajdukovo">Hajdukovo</option>
+          <option value="" data-translate="selectLocation">Select location</option>
+          <option value="subotica" data-translate="subotica">Subotica</option>
+          <option value="hajdukovo" data-translate="hajdukovo">Hajdukovo</option>
         </select>
       </label>
 
-      <h3>Ordered bread</h3>
+      <h3 data-translate="orderedBread">Ordered bread</h3>
 
       <div id="loadingSpinner" class="loading-spinner">
         <div class="spinner"></div>
@@ -376,17 +447,19 @@
       <div id="items" class="hidden"></div>
 
       <button type="button" class="add-article" onclick="addItem()">
-        ➕ Add bread
+        <span data-translate="addBread">➕ Add bread</span>
       </button>
 
-      <div class="total">Total price: <span id="totalPrice">0</span> RSD</div>
+      <div class="total">
+        <span data-translate="totalPrice">Total price:</span> <span id="totalPrice">0</span> <span data-translate="currency">RSD</span>
+      </div>
 
       <label>
-        Remark (optional)
-        <textarea id="remark" rows="3" placeholder="Any additional notes or special requests..."></textarea>
+        <span data-translate="remarkOptional">Remark (optional)</span>
+        <textarea id="remark" rows="3" data-translate-placeholder="remarkPlaceholder"></textarea>
       </label>
 
-      <button type="submit" style="margin-top: 1rem">Submit order</button>
+      <button type="submit" style="margin-top: 1rem" data-translate="submitOrder">Submit order</button>
 
       <div id="result" class="success"></div>
     </form>
@@ -394,16 +467,16 @@
     <div id="confirmationModal" class="modal-overlay" onclick="if(event.target === this) closeModal()">
       <div class="modal">
         <div class="modal-header">
-          <h3 class="modal-title">Confirm Order</h3>
+          <h3 class="modal-title" data-translate="confirmOrder">Confirm Order</h3>
           <button type="button" class="modal-close" onclick="closeModal()">✕</button>
         </div>
         <div class="modal-content" id="modalContent"></div>
         <div class="modal-footer">
           <div id="modalFooterButtons">
-            <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal()">
+            <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal()" data-translate="cancel">
               Cancel
             </button>
-            <button type="button" class="modal-btn" onclick="confirmOrder()">
+            <button type="button" class="modal-btn" onclick="confirmOrder()" data-translate="confirmOrderBtn">
               Confirm Order
             </button>
           </div>
@@ -417,6 +490,210 @@
     <script>
       const BREAD_TYPES_URL = "https://n8n.aleksthecoder.com/webhook/bread-types";
       const ORDER_SUBMIT_URL = "https://n8n.aleksthecoder.com/webhook/bakery-order";
+
+      // Translations object
+      const translations = {
+        pageTitle: {
+          sr: "🥖 Naručite svež hleb",
+          hu: "🥖 Rendeljen friss kenyeret",
+          en: "🥖 Order Fresh Bread"
+        },
+        firstName: {
+          sr: "Ime",
+          hu: "Keresztnév",
+          en: "First name"
+        },
+        lastName: {
+          sr: "Prezime",
+          hu: "Vezetéknév",
+          en: "Last name"
+        },
+        phoneNumber: {
+          sr: "Broj telefona",
+          hu: "Telefonszám",
+          en: "Phone number"
+        },
+        emailOptional: {
+          sr: "Email (opciono)",
+          hu: "Email (opcionális)",
+          en: "Email (optional)"
+        },
+        location: {
+          sr: "Lokacija",
+          hu: "Helyszín",
+          en: "Location"
+        },
+        selectLocation: {
+          sr: "Izaberite lokaciju",
+          hu: "Válasszon helyszínt",
+          en: "Select location"
+        },
+        subotica: {
+          sr: "Subotica",
+          hu: "Szabadka",
+          en: "Subotica"
+        },
+        hajdukovo: {
+          sr: "Hajdukovo",
+          hu: "Hajdújárás",
+          en: "Hajdukovo"
+        },
+        orderedBread: {
+          sr: "Naručeni hleb",
+          hu: "Rendelt kenyér",
+          en: "Ordered bread"
+        },
+        addBread: {
+          sr: "➕ Dodaj hleb",
+          hu: "➕ Kenyér hozzáadása",
+          en: "➕ Add bread"
+        },
+        totalPrice: {
+          sr: "Ukupna cena:",
+          hu: "Összesen:",
+          en: "Total price:"
+        },
+        currency: {
+          sr: "RSD",
+          hu: "RSD",
+          en: "RSD"
+        },
+        remarkOptional: {
+          sr: "Napomena (opciono)",
+          hu: "Megjegyzés (opcionális)",
+          en: "Remark (optional)"
+        },
+        remarkPlaceholder: {
+          sr: "Bilo kakve dodatne napomene ili posebni zahtevi...",
+          hu: "További megjegyzések vagy speciális kérések...",
+          en: "Any additional notes or special requests..."
+        },
+        submitOrder: {
+          sr: "Pošalji narudžbu",
+          hu: "Rendelés elküldése",
+          en: "Submit order"
+        },
+        confirmOrder: {
+          sr: "Potvrdi narudžbu",
+          hu: "Rendelés megerősítése",
+          en: "Confirm Order"
+        },
+        confirmOrderBtn: {
+          sr: "Potvrdi narudžbu",
+          hu: "Rendelés megerősítése",
+          en: "Confirm Order"
+        },
+        cancel: {
+          sr: "Otkaži",
+          hu: "Mégse",
+          en: "Cancel"
+        },
+        customer: {
+          sr: "Kupac:",
+          hu: "Vásárló:",
+          en: "Customer:"
+        },
+        locationLabel: {
+          sr: "Lokacija:",
+          hu: "Helyszín:",
+          en: "Location:"
+        },
+        orderItems: {
+          sr: "Stavke narudžbe:",
+          hu: "Rendelési tételek:",
+          en: "Order Items:"
+        },
+        total: {
+          sr: "Ukupno:",
+          hu: "Összesen:",
+          en: "Total:"
+        },
+        orderSuccess: {
+          sr: "✅ Narudžba je uspešno poslata!",
+          hu: "✅ A rendelés sikeresen elküldve!",
+          en: "✅ Order submitted successfully!"
+        },
+        orderFailed: {
+          sr: "Neuspešno slanje narudžbe. Molimo pokušajte ponovo.",
+          hu: "A rendelés elküldése sikertelen. Kérjük, próbálja újra.",
+          en: "Failed to submit order. Please try again."
+        },
+        errorOccurred: {
+          sr: "Došlo je do greške. Molimo pokušajte ponovo.",
+          hu: "Hiba történt. Kérjük, próbálja újra.",
+          en: "An error occurred. Please try again."
+        }
+      };
+
+      // Current language (default: English)
+      let currentLang = localStorage.getItem('bakery-lang') || 'en';
+
+      // Function to switch language
+      function switchLanguage(lang) {
+        currentLang = lang;
+        localStorage.setItem('bakery-lang', lang);
+        
+        // Update active button
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.lang === lang);
+        });
+
+        // Update all elements with data-translate attribute
+        document.querySelectorAll('[data-translate]').forEach(el => {
+          const key = el.dataset.translate;
+          if (translations[key] && translations[key][lang]) {
+            el.textContent = translations[key][lang];
+          }
+        });
+
+        // Update placeholder attributes
+        document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
+          const key = el.dataset.translatePlaceholder;
+          if (translations[key] && translations[key][lang]) {
+            el.placeholder = translations[key][lang];
+          }
+        });
+
+        // Update location select options
+        const locationSelect = document.getElementById('location');
+        if (locationSelect) {
+          Array.from(locationSelect.options).forEach(option => {
+            if (option.dataset.translate && translations[option.dataset.translate]) {
+              option.textContent = translations[option.dataset.translate][lang];
+            }
+          });
+        }
+
+        // Update bread type options in existing items
+        document.querySelectorAll("#items .row select").forEach(select => {
+          const selectedValue = select.value;
+          select.innerHTML = '';
+          breadTypes.forEach((b) => {
+            const opt = document.createElement("option");
+            opt.value = b.id;
+            opt.dataset.price = b.price;
+            opt.textContent = `${b.name} (${b.price} ${translations.currency[lang]})`;
+            select.appendChild(opt);
+          });
+          select.value = selectedValue;
+        });
+
+        // Update page title
+        document.title = translations.pageTitle[lang] || "Bakery Order";
+        
+        // Update html lang attribute
+        document.documentElement.lang = lang;
+      }
+
+      // Initialize language selector buttons
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          switchLanguage(btn.dataset.lang);
+        });
+      });
+
+      // Load saved language on page load
+      switchLanguage(currentLang);
 
       // Form element selectors (global variables for DRY principle)
       const firstNameEl = document.getElementById('firstName');
@@ -460,7 +737,7 @@
           const opt = document.createElement("option");
           opt.value = b.id;
           opt.dataset.price = b.price;
-          opt.textContent = `${b.name} (${b.price} RSD)`;
+          opt.textContent = `${b.name} (${b.price} ${translations.currency[currentLang]})`;
           select.appendChild(opt);
         });
 
@@ -520,26 +797,26 @@
         const content = document.getElementById("modalContent");
         
         const locationNames = {
-          subotica: 'Subotica',
-          hajdukovo: 'Hajdukovo'
+          subotica: translations.subotica[currentLang],
+          hajdukovo: translations.hajdukovo[currentLang]
         };
         
         let html = `
           <div style="margin-bottom: 1rem;">
-            <strong>Customer:</strong><br>
+            <strong>${translations.customer[currentLang]}</strong><br>
             ${orderData.customer.firstName} ${orderData.customer.lastName}<br>
             ${orderData.customer.phone}
             ${orderData.customer.email ? `<br>${orderData.customer.email}` : ''}
-            ${orderData.location ? `<br><br><strong>Location:</strong> ${locationNames[orderData.location] || orderData.location}` : ''}
+            ${orderData.location ? `<br><br><strong>${translations.locationLabel[currentLang]}</strong> ${locationNames[orderData.location] || orderData.location}` : ''}
           </div>
           <div style="margin-bottom: 1rem;">
-            <strong>Order Items:</strong>
+            <strong>${translations.orderItems[currentLang]}</strong>
         `;
         
         orderData.items.forEach((item) => {
           html += `
             <div class="modal-item">
-              ${item.breadName} × ${item.quantity} = ${item.total} RSD
+              ${item.breadName} × ${item.quantity} = ${item.total} ${translations.currency[currentLang]}
             </div>
           `;
         });
@@ -547,7 +824,7 @@
         html += `
           </div>
           <div style="font-size: 1.2rem; font-weight: 600; text-align: right; padding-top: 1rem; border-top: 2px solid var(--border);">
-            Total: ${orderData.totalPrice} RSD
+            ${translations.total[currentLang]}: ${orderData.totalPrice} ${translations.currency[currentLang]}
           </div>
         `;
         
@@ -622,13 +899,13 @@
             itemsDiv.innerHTML = "";
             addItem();
             document.getElementById("result").textContent =
-              "✅ Order submitted successfully!";
+              translations.orderSuccess[currentLang];
             calculateTotal();
           } else {
-            alert("Failed to submit order. Please try again.");
+            alert(translations.orderFailed[currentLang]);
           }
         } catch (error) {
-          alert("An error occurred. Please try again.");
+          alert(translations.errorOccurred[currentLang]);
         } finally {
           // Restore buttons and hide spinner
           modalFooterButtons.style.display = "flex";
