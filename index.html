@@ -57,7 +57,8 @@
       }
 
       input,
-      select {
+      select,
+      textarea {
         margin-top: 0.4rem;
         width: 100%;
         padding: 0.65rem 0.75rem;
@@ -68,8 +69,15 @@
         background-color: #fff;
       }
 
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+        font-family: inherit;
+      }
+
       input:focus,
-      select:focus {
+      select:focus,
+      textarea:focus {
         outline: none;
         border-color: var(--primary);
         box-shadow: var(--shadow-focus);
@@ -297,6 +305,12 @@
         display: flex;
         gap: 1rem;
         justify-content: flex-end;
+        align-items: center;
+      }
+
+      #modalFooterButtons {
+        display: flex;
+        gap: 1rem;
       }
 
       .modal-btn {
@@ -367,6 +381,11 @@
 
       <div class="total">Total price: <span id="totalPrice">0</span> RSD</div>
 
+      <label>
+        Remark (optional)
+        <textarea id="remark" rows="3" placeholder="Any additional notes or special requests..."></textarea>
+      </label>
+
       <button type="submit" style="margin-top: 1rem">Submit order</button>
 
       <div id="result" class="success"></div>
@@ -380,12 +399,17 @@
         </div>
         <div class="modal-content" id="modalContent"></div>
         <div class="modal-footer">
-          <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal()">
-            Cancel
-          </button>
-          <button type="button" class="modal-btn" onclick="confirmOrder()">
-            Confirm Order
-          </button>
+          <div id="modalFooterButtons">
+            <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal()">
+              Cancel
+            </button>
+            <button type="button" class="modal-btn" onclick="confirmOrder()">
+              Confirm Order
+            </button>
+          </div>
+          <div id="modalFooterSpinner" class="loading-spinner hidden">
+            <div class="spinner"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -533,6 +557,19 @@
 
       function closeModal() {
         document.getElementById("confirmationModal").classList.remove("show");
+        
+        // Reset modal footer state
+        const modalFooterButtons = document.getElementById("modalFooterButtons");
+        const modalFooterSpinner = document.getElementById("modalFooterSpinner");
+        const modalCloseBtn = document.querySelector(".modal-close");
+        
+        if (modalFooterButtons && modalFooterSpinner && modalCloseBtn) {
+          modalFooterButtons.style.display = "flex";
+          modalFooterSpinner.classList.add("hidden");
+          modalCloseBtn.disabled = false;
+          modalCloseBtn.style.pointerEvents = "auto";
+          modalCloseBtn.style.opacity = "1";
+        }
       }
 
       let pendingOrderData = null;
@@ -540,10 +577,16 @@
       async function confirmOrder() {
         if (!pendingOrderData) return;
         
-        const submitBtn = document.querySelector('button[type="submit"]');
-        submitBtn.disabled = true;
-        submitBtn.classList.add("loading");
-        submitBtn.textContent = "Submitting...";
+        // Show spinner and hide buttons in modal
+        const modalFooterButtons = document.getElementById("modalFooterButtons");
+        const modalFooterSpinner = document.getElementById("modalFooterSpinner");
+        const modalCloseBtn = document.querySelector(".modal-close");
+        
+        modalFooterButtons.style.display = "none";
+        modalFooterSpinner.classList.remove("hidden");
+        modalCloseBtn.disabled = true;
+        modalCloseBtn.style.pointerEvents = "none";
+        modalCloseBtn.style.opacity = "0.5";
 
         try {
           const res = await fetch(ORDER_SUBMIT_URL, {
@@ -587,9 +630,12 @@
         } catch (error) {
           alert("An error occurred. Please try again.");
         } finally {
-          submitBtn.disabled = false;
-          submitBtn.classList.remove("loading");
-          submitBtn.textContent = "Submit order";
+          // Restore buttons and hide spinner
+          modalFooterButtons.style.display = "flex";
+          modalFooterSpinner.classList.add("hidden");
+          modalCloseBtn.disabled = false;
+          modalCloseBtn.style.pointerEvents = "auto";
+          modalCloseBtn.style.opacity = "1";
           pendingOrderData = null;
         }
       }
@@ -626,6 +672,7 @@
             totalPrice: Number(totalPrice.textContent),
             submittedAt: new Date().toISOString(),
             location: document.getElementById('location').value,
+            remark: document.getElementById('remark').value || null,
           };
 
           // Save customer info to localStorage
