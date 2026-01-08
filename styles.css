@@ -27,6 +27,29 @@ body {
 }
 
 /* ============================================
+   Logo Styles
+   ============================================ */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.logo {
+  width: 100px;
+  height: auto;
+  filter: drop-shadow(0 4px 8px rgba(198, 134, 66, 0.3)) 
+          drop-shadow(0 2px 4px rgba(198, 134, 66, 0.2));
+  transition: filter 0.3s ease;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 6px 12px rgba(198, 134, 66, 0.4)) 
+          drop-shadow(0 3px 6px rgba(198, 134, 66, 0.3));
+}
+
+/* ============================================
    Typography
    ============================================ */
 h2 {
