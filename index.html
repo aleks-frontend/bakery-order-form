@@ -3,410 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <title>Bakery Order</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-
-    <style>
-      :root {
-        --bg: #fdf6ec;
-        --card: #ffffff;
-        --primary: #c68642;
-        --primary-hover: #b87736;
-        --border: #e6d8c3;
-        --text: #3d2f1e;
-        --shadow-focus: 0 0 0 4px rgba(198, 134, 66, 0.25);
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Roboto", sans-serif;
-        background-color: var(--bg);
-        color: var(--text);
-        margin: 0;
-        padding: 2rem;
-      }
-
-      h2 {
-        margin-top: 0;
-        text-align: center;
-      }
-
-      h3 {
-        margin-top: 24px;
-        text-align: left;
-      }
-
-      form {
-        background: var(--card);
-        padding: 2rem;
-        border-radius: 16px;
-        max-width: 720px;
-        margin: auto;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-      }
-
-      label {
-        display: block;
-        margin-top: 1rem;
-        font-weight: 500;
-      }
-
-      input,
-      select,
-      textarea {
-        margin-top: 0.4rem;
-        width: 100%;
-        padding: 0.65rem 0.75rem;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        font-size: 0.95rem;
-        transition: border 0.2s ease, box-shadow 0.2s ease;
-        background-color: #fff;
-      }
-
-      textarea {
-        resize: vertical;
-        min-height: 80px;
-        font-family: inherit;
-      }
-
-      input:focus,
-      select:focus,
-      textarea:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: var(--shadow-focus);
-      }
-
-      .row {
-        display: flex;
-        gap: 0.75rem;
-        margin-top: 0.75rem;
-        align-items: flex-end;
-      }
-
-      .row select {
-        flex: 2;
-      }
-
-      .row input[type="number"] {
-        flex: 1;
-      }
-
-      button {
-        border-radius: 12px;
-        border: none;
-        padding: 0.65rem 1rem;
-        font-size: 0.95rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: background 0.2s ease, transform 0.05s ease;
-      }
-
-      button:hover {
-        transform: translateY(-1px);
-      }
-
-      button:active {
-        transform: translateY(0);
-      }
-
-      button[type="submit"],
-      .add-btn {
-        background: var(--primary);
-        color: white;
-      }
-
-      button[type="submit"]:hover,
-      .add-btn:hover {
-        background: var(--primary-hover);
-      }
-
-      .add-article {
-        margin-top: 12px;
-      }
-
-      .remove-btn {
-        background: #fdecea;
-        color: #b91c1c;
-        border: 1px solid #f5c2c2;
-        padding: 0.55rem 0.7rem;
-      }
-
-      .remove-btn:hover {
-        background: #fbd5d5;
-      }
-
-      .total {
-        margin-top: 1.5rem;
-        font-size: 1.2rem;
-        font-weight: 600;
-        text-align: right;
-      }
-
-      .success {
-        margin-top: 1rem;
-        color: #2f7a3e;
-        font-weight: 500;
-      }
-
-      .loading-spinner {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 2rem;
-      }
-
-      .spinner {
-        width: 40px;
-        height: 40px;
-        border: 4px solid var(--border);
-        border-top-color: var(--primary);
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-      }
-
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-
-      #items.hidden {
-        display: none;
-      }
-
-      .loading-spinner.hidden {
-        display: none;
-      }
-
-      button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        transform: none;
-      }
-
-      button:disabled:hover {
-        transform: none;
-      }
-
-      button[type="submit"].loading {
-        position: relative;
-        color: transparent;
-      }
-
-      button[type="submit"].loading::after {
-        content: "";
-        position: absolute;
-        width: 16px;
-        height: 16px;
-        top: 50%;
-        left: 50%;
-        margin-left: -8px;
-        margin-top: -8px;
-        border: 2px solid #ffffff;
-        border-top-color: transparent;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-      }
-
-      .modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .modal-overlay.show {
-        display: flex;
-      }
-
-      .modal {
-        background: var(--card);
-        border-radius: 16px;
-        padding: 2rem;
-        max-width: 500px;
-        width: 90%;
-        max-height: 90vh;
-        overflow-y: auto;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-        animation: modalSlideIn 0.3s ease;
-      }
-
-      @keyframes modalSlideIn {
-        from {
-          transform: translateY(-20px);
-          opacity: 0;
-        }
-        to {
-          transform: translateY(0);
-          opacity: 1;
-        }
-      }
-
-      .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-      }
-
-      .modal-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin: 0;
-      }
-
-      .modal-close {
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-        color: var(--text);
-        padding: 0;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
-        transition: background 0.2s ease;
-      }
-
-      .modal-close:hover {
-        background: var(--border);
-      }
-
-      .modal-content {
-        margin-bottom: 1.5rem;
-      }
-
-      .modal-item {
-        padding: 0.75rem 0;
-        border-bottom: 1px solid var(--border);
-      }
-
-      .modal-item:last-child {
-        border-bottom: none;
-      }
-
-      .modal-footer {
-        display: flex;
-        gap: 1rem;
-        justify-content: flex-end;
-        align-items: center;
-      }
-
-      #modalFooterButtons {
-        display: flex;
-        gap: 1rem;
-      }
-
-      .modal-btn {
-        padding: 0.65rem 1.5rem;
-      }
-
-      .modal-btn-secondary {
-        background: var(--border);
-        color: var(--text);
-      }
-
-      .modal-btn-secondary:hover {
-        background: #d4c5b0;
-      }
-
-      .language-selector {
-        position: fixed;
-        top: 1rem;
-        right: 1rem;
-        display: flex;
-        gap: 0.5rem;
-        z-index: 100;
-      }
-
-      .lang-btn {
-        width: 36px;
-        height: 36px;
-        border: 2px solid var(--border);
-        border-radius: 8px;
-        background: var(--card);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        padding: 0;
-      }
-
-      .lang-btn img {
-        width: 20px;
-        height: 13px;
-        object-fit: cover;
-        border-radius: 2px;
-        display: block;
-      }
-
-      .lang-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        border-color: var(--primary);
-      }
-
-      .lang-btn.active {
-        border-color: var(--primary);
-        background: var(--primary);
-        box-shadow: 0 0 0 3px rgba(198, 134, 66, 0.2);
-      }
-
-      @media (max-width: 600px) {
-        .row {
-          flex-direction: column;
-          align-items: stretch;
-        }
-
-        .language-selector {
-          top: 0.5rem;
-          right: 0.5rem;
-        }
-
-        .lang-btn {
-          width: 32px;
-          height: 32px;
-        }
-
-        .lang-btn img {
-          width: 20px;
-          height: 15px;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="language-selector">
-      <button class="lang-btn" data-lang="sr" title="Serbian">
-        <img src="https://flagcdn.com/w20/rs.png" alt="Serbian" />
-      </button>
       <button class="lang-btn" data-lang="hu" title="Hungarian">
         <img src="https://flagcdn.com/w20/hu.png" alt="Hungarian" />
+      </button>
+      <button class="lang-btn" data-lang="sr" title="Serbian">
+        <img src="https://flagcdn.com/w20/rs.png" alt="Serbian" />
       </button>
       <button class="lang-btn active" data-lang="en" title="English">
         <img src="https://flagcdn.com/w20/gb.png" alt="English" />
       </button>
     </div>
 
-    <h2 data-translate="pageTitle">🥖 Bakery Order Form</h2>
+    <h2 data-translate="pageTitle">Bakery Order Form</h2>
 
     <form id="orderForm">
       <label>
@@ -432,9 +49,13 @@
       <label>
         <span data-translate="location">Location</span>
         <select id="location" required>
-          <option value="" data-translate="selectLocation">Select location</option>
+          <option value="" data-translate="selectLocation">
+            Select location
+          </option>
           <option value="subotica" data-translate="subotica">Subotica</option>
-          <option value="hajdukovo" data-translate="hajdukovo">Hajdukovo</option>
+          <option value="hajdukovo" data-translate="hajdukovo">
+            Hajdukovo
+          </option>
         </select>
       </label>
 
@@ -451,32 +72,62 @@
       </button>
 
       <div class="total">
-        <span data-translate="totalPrice">Total price:</span> <span id="totalPrice">0</span> <span data-translate="currency">RSD</span>
+        <span data-translate="totalPrice">Total price:</span>
+        <span id="totalPrice">0</span>
+        <span data-translate="currency">RSD</span>
       </div>
 
       <label>
         <span data-translate="remarkOptional">Remark (optional)</span>
-        <textarea id="remark" rows="3" data-translate-placeholder="remarkPlaceholder"></textarea>
+        <textarea
+          id="remark"
+          rows="3"
+          data-translate-placeholder="remarkPlaceholder"
+        ></textarea>
       </label>
 
-      <button type="submit" style="margin-top: 1rem" data-translate="submitOrder">Submit order</button>
+      <button
+        type="submit"
+        style="margin-top: 1rem"
+        data-translate="submitOrder"
+      >
+        Submit order
+      </button>
 
       <div id="result" class="success"></div>
     </form>
 
-    <div id="confirmationModal" class="modal-overlay" onclick="if(event.target === this) closeModal()">
+    <div
+      id="confirmationModal"
+      class="modal-overlay"
+      onclick="if(event.target === this) closeModal()"
+    >
       <div class="modal">
         <div class="modal-header">
-          <h3 class="modal-title" data-translate="confirmOrder">Confirm Order</h3>
-          <button type="button" class="modal-close" onclick="closeModal()">✕</button>
+          <h3 class="modal-title" data-translate="confirmOrder">
+            Confirm Order
+          </h3>
+          <button type="button" class="modal-close" onclick="closeModal()">
+            ✕
+          </button>
         </div>
         <div class="modal-content" id="modalContent"></div>
         <div class="modal-footer">
           <div id="modalFooterButtons">
-            <button type="button" class="modal-btn modal-btn-secondary" onclick="closeModal()" data-translate="cancel">
+            <button
+              type="button"
+              class="modal-btn modal-btn-secondary"
+              onclick="closeModal()"
+              data-translate="cancel"
+            >
               Cancel
             </button>
-            <button type="button" class="modal-btn" onclick="confirmOrder()" data-translate="confirmOrderBtn">
+            <button
+              type="button"
+              class="modal-btn"
+              onclick="confirmOrder()"
+              data-translate="confirmOrderBtn"
+            >
               Confirm Order
             </button>
           </div>
@@ -487,159 +138,28 @@
       </div>
     </div>
 
+    <script src="translations.js"></script>
     <script>
-      const BREAD_TYPES_URL = "https://n8n.aleksthecoder.com/webhook/bread-types";
-      const ORDER_SUBMIT_URL = "https://n8n.aleksthecoder.com/webhook/bakery-order";
-
-      // Translations object
-      const translations = {
-        pageTitle: {
-          sr: "🥖 Naručite svež hleb",
-          hu: "🥖 Rendeljen friss kenyeret",
-          en: "🥖 Order Fresh Bread"
-        },
-        firstName: {
-          sr: "Ime",
-          hu: "Keresztnév",
-          en: "First name"
-        },
-        lastName: {
-          sr: "Prezime",
-          hu: "Vezetéknév",
-          en: "Last name"
-        },
-        phoneNumber: {
-          sr: "Broj telefona",
-          hu: "Telefonszám",
-          en: "Phone number"
-        },
-        emailOptional: {
-          sr: "Email (opciono)",
-          hu: "Email (opcionális)",
-          en: "Email (optional)"
-        },
-        location: {
-          sr: "Lokacija",
-          hu: "Helyszín",
-          en: "Location"
-        },
-        selectLocation: {
-          sr: "Izaberite lokaciju",
-          hu: "Válasszon helyszínt",
-          en: "Select location"
-        },
-        subotica: {
-          sr: "Subotica",
-          hu: "Szabadka",
-          en: "Subotica"
-        },
-        hajdukovo: {
-          sr: "Hajdukovo",
-          hu: "Hajdújárás",
-          en: "Hajdukovo"
-        },
-        orderedBread: {
-          sr: "Naručeni hleb",
-          hu: "Rendelt kenyér",
-          en: "Ordered bread"
-        },
-        addBread: {
-          sr: "➕ Dodaj hleb",
-          hu: "➕ Kenyér hozzáadása",
-          en: "➕ Add bread"
-        },
-        totalPrice: {
-          sr: "Ukupna cena:",
-          hu: "Összesen:",
-          en: "Total price:"
-        },
-        currency: {
-          sr: "RSD",
-          hu: "RSD",
-          en: "RSD"
-        },
-        remarkOptional: {
-          sr: "Napomena (opciono)",
-          hu: "Megjegyzés (opcionális)",
-          en: "Remark (optional)"
-        },
-        remarkPlaceholder: {
-          sr: "Bilo kakve dodatne napomene ili posebni zahtevi...",
-          hu: "További megjegyzések vagy speciális kérések...",
-          en: "Any additional notes or special requests..."
-        },
-        submitOrder: {
-          sr: "Pošalji narudžbu",
-          hu: "Rendelés elküldése",
-          en: "Submit order"
-        },
-        confirmOrder: {
-          sr: "Potvrdi narudžbu",
-          hu: "Rendelés megerősítése",
-          en: "Confirm Order"
-        },
-        confirmOrderBtn: {
-          sr: "Potvrdi narudžbu",
-          hu: "Rendelés megerősítése",
-          en: "Confirm Order"
-        },
-        cancel: {
-          sr: "Otkaži",
-          hu: "Mégse",
-          en: "Cancel"
-        },
-        customer: {
-          sr: "Kupac:",
-          hu: "Vásárló:",
-          en: "Customer:"
-        },
-        locationLabel: {
-          sr: "Lokacija:",
-          hu: "Helyszín:",
-          en: "Location:"
-        },
-        orderItems: {
-          sr: "Stavke narudžbe:",
-          hu: "Rendelési tételek:",
-          en: "Order Items:"
-        },
-        total: {
-          sr: "Ukupno:",
-          hu: "Összesen:",
-          en: "Total:"
-        },
-        orderSuccess: {
-          sr: "✅ Narudžba je uspešno poslata!",
-          hu: "✅ A rendelés sikeresen elküldve!",
-          en: "✅ Order submitted successfully!"
-        },
-        orderFailed: {
-          sr: "Neuspešno slanje narudžbe. Molimo pokušajte ponovo.",
-          hu: "A rendelés elküldése sikertelen. Kérjük, próbálja újra.",
-          en: "Failed to submit order. Please try again."
-        },
-        errorOccurred: {
-          sr: "Došlo je do greške. Molimo pokušajte ponovo.",
-          hu: "Hiba történt. Kérjük, próbálja újra.",
-          en: "An error occurred. Please try again."
-        }
-      };
+      const BREAD_TYPES_URL =
+        "https://n8n.aleksthecoder.com/webhook/bread-types";
+      const ORDER_SUBMIT_URL =
+        "https://n8n.aleksthecoder.com/webhook/bakery-order";
 
       // Current language (default: English)
-      let currentLang = localStorage.getItem('bakery-lang') || 'en';
+      let currentLang = localStorage.getItem("bakery-lang") || "en";
 
       // Function to switch language
       function switchLanguage(lang) {
         currentLang = lang;
-        localStorage.setItem('bakery-lang', lang);
-        
+        localStorage.setItem("bakery-lang", lang);
+
         // Update active button
-        document.querySelectorAll('.lang-btn').forEach(btn => {
-          btn.classList.toggle('active', btn.dataset.lang === lang);
+        document.querySelectorAll(".lang-btn").forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.lang === lang);
         });
 
         // Update all elements with data-translate attribute
-        document.querySelectorAll('[data-translate]').forEach(el => {
+        document.querySelectorAll("[data-translate]").forEach((el) => {
           const key = el.dataset.translate;
           if (translations[key] && translations[key][lang]) {
             el.textContent = translations[key][lang];
@@ -647,27 +167,32 @@
         });
 
         // Update placeholder attributes
-        document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
-          const key = el.dataset.translatePlaceholder;
-          if (translations[key] && translations[key][lang]) {
-            el.placeholder = translations[key][lang];
-          }
-        });
+        document
+          .querySelectorAll("[data-translate-placeholder]")
+          .forEach((el) => {
+            const key = el.dataset.translatePlaceholder;
+            if (translations[key] && translations[key][lang]) {
+              el.placeholder = translations[key][lang];
+            }
+          });
 
         // Update location select options
-        const locationSelect = document.getElementById('location');
+        const locationSelect = document.getElementById("location");
         if (locationSelect) {
-          Array.from(locationSelect.options).forEach(option => {
-            if (option.dataset.translate && translations[option.dataset.translate]) {
+          Array.from(locationSelect.options).forEach((option) => {
+            if (
+              option.dataset.translate &&
+              translations[option.dataset.translate]
+            ) {
               option.textContent = translations[option.dataset.translate][lang];
             }
           });
         }
 
         // Update bread type options in existing items
-        document.querySelectorAll("#items .row select").forEach(select => {
+        document.querySelectorAll("#items .row select").forEach((select) => {
           const selectedValue = select.value;
-          select.innerHTML = '';
+          select.innerHTML = "";
           breadTypes.forEach((b) => {
             const opt = document.createElement("option");
             opt.value = b.id;
@@ -680,14 +205,14 @@
 
         // Update page title
         document.title = translations.pageTitle[lang] || "Bakery Order";
-        
+
         // Update html lang attribute
         document.documentElement.lang = lang;
       }
 
       // Initialize language selector buttons
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
+      document.querySelectorAll(".lang-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
           switchLanguage(btn.dataset.lang);
         });
       });
@@ -696,11 +221,11 @@
       switchLanguage(currentLang);
 
       // Form element selectors (global variables for DRY principle)
-      const firstNameEl = document.getElementById('firstName');
-      const lastNameEl = document.getElementById('lastName');
-      const phoneEl = document.getElementById('phone');
-      const emailEl = document.getElementById('email');
-      const locationEl = document.getElementById('location');
+      const firstNameEl = document.getElementById("firstName");
+      const lastNameEl = document.getElementById("lastName");
+      const phoneEl = document.getElementById("phone");
+      const emailEl = document.getElementById("email");
+      const locationEl = document.getElementById("location");
 
       let breadTypes = [
         { id: "white_500", name: "White bread 500g", price: 120 },
@@ -720,7 +245,6 @@
           const res = await fetch(BREAD_TYPES_URL);
           const breadTypesResponse = await res.json();
           breadTypes = breadTypesResponse.data;
-
         } catch {
           breadTypes = fallbackBreadTypes;
         }
@@ -795,24 +319,32 @@
       function showConfirmationModal(orderData) {
         const modal = document.getElementById("confirmationModal");
         const content = document.getElementById("modalContent");
-        
+
         const locationNames = {
           subotica: translations.subotica[currentLang],
-          hajdukovo: translations.hajdukovo[currentLang]
+          hajdukovo: translations.hajdukovo[currentLang],
         };
-        
+
         let html = `
           <div style="margin-bottom: 1rem;">
             <strong>${translations.customer[currentLang]}</strong><br>
             ${orderData.customer.firstName} ${orderData.customer.lastName}<br>
             ${orderData.customer.phone}
-            ${orderData.customer.email ? `<br>${orderData.customer.email}` : ''}
-            ${orderData.location ? `<br><br><strong>${translations.locationLabel[currentLang]}</strong> ${locationNames[orderData.location] || orderData.location}` : ''}
+            ${orderData.customer.email ? `<br>${orderData.customer.email}` : ""}
+            ${
+              orderData.location
+                ? `<br><br><strong>${
+                    translations.locationLabel[currentLang]
+                  }</strong> ${
+                    locationNames[orderData.location] || orderData.location
+                  }`
+                : ""
+            }
           </div>
           <div style="margin-bottom: 1rem;">
             <strong>${translations.orderItems[currentLang]}</strong>
         `;
-        
+
         orderData.items.forEach((item) => {
           html += `
             <div class="modal-item">
@@ -820,26 +352,28 @@
             </div>
           `;
         });
-        
+
         html += `
           </div>
           <div style="font-size: 1.2rem; font-weight: 600; text-align: right; padding-top: 1rem; border-top: 2px solid var(--border);">
             ${translations.total[currentLang]}: ${orderData.totalPrice} ${translations.currency[currentLang]}
           </div>
         `;
-        
+
         content.innerHTML = html;
         modal.classList.add("show");
       }
 
       function closeModal() {
         document.getElementById("confirmationModal").classList.remove("show");
-        
+
         // Reset modal footer state
-        const modalFooterButtons = document.getElementById("modalFooterButtons");
-        const modalFooterSpinner = document.getElementById("modalFooterSpinner");
+        const modalFooterButtons =
+          document.getElementById("modalFooterButtons");
+        const modalFooterSpinner =
+          document.getElementById("modalFooterSpinner");
         const modalCloseBtn = document.querySelector(".modal-close");
-        
+
         if (modalFooterButtons && modalFooterSpinner && modalCloseBtn) {
           modalFooterButtons.style.display = "flex";
           modalFooterSpinner.classList.add("hidden");
@@ -853,12 +387,14 @@
 
       async function confirmOrder() {
         if (!pendingOrderData) return;
-        
+
         // Show spinner and hide buttons in modal
-        const modalFooterButtons = document.getElementById("modalFooterButtons");
-        const modalFooterSpinner = document.getElementById("modalFooterSpinner");
+        const modalFooterButtons =
+          document.getElementById("modalFooterButtons");
+        const modalFooterSpinner =
+          document.getElementById("modalFooterSpinner");
         const modalCloseBtn = document.querySelector(".modal-close");
-        
+
         modalFooterButtons.style.display = "none";
         modalFooterSpinner.classList.remove("hidden");
         modalCloseBtn.disabled = true;
@@ -874,26 +410,26 @@
 
           if (res.ok) {
             closeModal();
-            
+
             // Save user data before resetting
             const savedUserData = {
               firstName: firstNameEl.value,
               lastName: lastNameEl.value,
               phone: phoneEl.value,
               email: emailEl.value,
-              location: locationEl.value
+              location: locationEl.value,
             };
-            
+
             // Reset form (clears all fields)
             orderForm.reset();
-            
+
             // Restore user data
             firstNameEl.value = savedUserData.firstName;
             lastNameEl.value = savedUserData.lastName;
             phoneEl.value = savedUserData.phone;
             emailEl.value = savedUserData.email;
             locationEl.value = savedUserData.location;
-            
+
             // Clear order items and add new item
             const itemsDiv = document.getElementById("items");
             itemsDiv.innerHTML = "";
@@ -948,52 +484,54 @@
             items,
             totalPrice: Number(totalPrice.textContent),
             submittedAt: new Date().toISOString(),
-            location: document.getElementById('location').value,
-            remark: document.getElementById('remark').value || null,
+            location: document.getElementById("location").value,
+            remark: document.getElementById("remark").value || null,
           };
 
           // Save customer info to localStorage
           const customerInfo = {
             firstName: firstNameEl.value,
             lastName: lastNameEl.value,
-            email: emailEl.value || '',
+            email: emailEl.value || "",
             phone: phoneEl.value,
-            location: locationEl.value
+            location: locationEl.value,
           };
-          localStorage.setItem('bakery-order', JSON.stringify(customerInfo));
-
+          localStorage.setItem("bakery-order", JSON.stringify(customerInfo));
 
           pendingOrderData = payload;
           showConfirmationModal(payload);
         });
 
       function loadCustomerInfoFromStorage() {
-        const stored = localStorage.getItem('bakery-order');
+        const stored = localStorage.getItem("bakery-order");
         if (stored) {
           try {
             const customerInfo = JSON.parse(stored);
-            
+
             if (customerInfo.firstName) {
               firstNameEl.value = customerInfo.firstName;
             }
-            
+
             if (customerInfo.lastName) {
               lastNameEl.value = customerInfo.lastName;
             }
-            
+
             if (customerInfo.email) {
               emailEl.value = customerInfo.email;
             }
-            
+
             if (customerInfo.phone) {
               phoneEl.value = customerInfo.phone;
             }
-            
+
             if (customerInfo.location) {
               locationEl.value = customerInfo.location;
             }
           } catch (error) {
-            console.error('Error loading customer info from localStorage:', error);
+            console.error(
+              "Error loading customer info from localStorage:",
+              error
+            );
           }
         }
       }
