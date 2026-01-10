@@ -29,6 +29,8 @@
 
     <h2 data-translate="pageTitle">Bakery Order Form</h2>
 
+    <div id="ordersStatus" class="orders-status hidden"></div>
+
     <form id="orderForm">
       <label>
         <span data-translate="firstName">First name</span>
@@ -152,6 +154,51 @@
       // Current language (default: English)
       let currentLang = localStorage.getItem("bakery-lang") || "en";
 
+      // Bread types and order acceptance status
+      let breadTypes = [
+        { id: "white_500", name: "White bread 500g", price: 120 },
+        { id: "rye_700", name: "Rye bread 700g", price: 180 },
+      ];
+
+      let acceptingOrders = true;
+
+      /**
+       * Example fallback data if fetch fails
+       */
+      const fallbackBreadTypes = [
+        { id: "white_500", name: "White bread 500g", price: 120 },
+        { id: "rye_700", name: "Rye bread 700g", price: 180 },
+      ];
+
+      function updateOrdersStatusDisplay() {
+        const statusDiv = document.getElementById("ordersStatus");
+        const orderForm = document.getElementById("orderForm");
+        
+        if (statusDiv) {
+          if (acceptingOrders) {
+            statusDiv.classList.add("hidden");
+          } else {
+            statusDiv.classList.remove("hidden");
+            const websiteUrl = "https://lisztrapszodia.in.rs/index.html";
+            statusDiv.innerHTML = `
+              <div>${translations.ordersNotAcceptedFirst[currentLang]} ${translations.ordersNotAcceptedSecond[currentLang]}</div>
+              <div style="margin-top: 0.75rem;">
+                ${translations.ordersNotAcceptedThirdPrefix[currentLang]} 
+                <a href="${websiteUrl}" target="_blank" rel="noopener noreferrer">${translations.ordersNotAcceptedThirdLink[currentLang]}</a>.
+              </div>
+            `;
+          }
+        }
+        
+        if (orderForm) {
+          if (acceptingOrders) {
+            orderForm.classList.remove("hidden");
+          } else {
+            orderForm.classList.add("hidden");
+          }
+        }
+      }
+
       // Function to switch language
       function switchLanguage(lang) {
         currentLang = lang;
@@ -179,6 +226,9 @@
               el.placeholder = translations[key][lang];
             }
           });
+
+        // Update orders status display
+        updateOrdersStatusDisplay();
 
         // Update location select options
         const locationSelect = document.getElementById("location");
@@ -231,26 +281,17 @@
       const emailEl = document.getElementById("email");
       const locationEl = document.getElementById("location");
 
-      let breadTypes = [
-        { id: "white_500", name: "White bread 500g", price: 120 },
-        { id: "rye_700", name: "Rye bread 700g", price: 180 },
-      ];
-
-      /**
-       * Example fallback data if fetch fails
-       */
-      const fallbackBreadTypes = [
-        { id: "white_500", name: "White bread 500g", price: 120 },
-        { id: "rye_700", name: "Rye bread 700g", price: 180 },
-      ];
-
       async function loadBreadTypes() {
         try {
           const res = await fetch(BREAD_TYPES_URL);
           const breadTypesResponse = await res.json();
-          breadTypes = breadTypesResponse.data;
+          acceptingOrders = breadTypesResponse?.acceptingOrders ?? true;
+          breadTypes = breadTypesResponse?.data ?? breadTypesResponse.data ?? fallbackBreadTypes;
+          updateOrdersStatusDisplay();
         } catch {
+          acceptingOrders = true;
           breadTypes = fallbackBreadTypes;
+          updateOrdersStatusDisplay();
         }
       }
 

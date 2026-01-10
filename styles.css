@@ -215,7 +215,45 @@ button[type="submit"].loading::after {
   font-weight: 500;
 }
 
+.hidden {
+  display: none !important;
+}
+
 #items.hidden {
+  display: none;
+}
+
+/* ============================================
+   Orders Status Information
+   ============================================ */
+.orders-status {
+  background: #eff6ff;
+  border: 2px solid #3b82f6;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem auto 2rem auto;
+  max-width: 720px;
+  text-align: center;
+  color: #1e40af;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.5;
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.1);
+}
+
+.orders-status a {
+  color: #1e40af;
+  text-decoration: underline;
+  font-weight: 700;
+  transition: opacity 0.2s ease;
+}
+
+.orders-status a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.orders-status.hidden {
   display: none;
 }
 

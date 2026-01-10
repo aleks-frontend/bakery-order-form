@@ -129,4 +129,24 @@ const translations = {
     hu: "Hiba történt. Kérjük, próbálja újra.",
     en: "An error occurred. Please try again.",
   },
+  ordersNotAcceptedFirst: {
+    sr: "Trenutno ne primamo nove narudžbine za ovu nedelju.",
+    hu: "Jelenleg nem fogadunk új rendeléseket erre a hétre.",
+    en: "We are currently not accepting new orders for this week.",
+  },
+  ordersNotAcceptedSecond: {
+    sr: "Nove porudžbine biće dostupne sledeće nedelje 💛",
+    hu: "Az új rendelések a következő héten lesznek elérhetők 💛",
+    en: "New orders will be available next week 💛",
+  },
+  ordersNotAcceptedThirdPrefix: {
+    sr: "Do tada, pogledajte",
+    hu: "Addig tekintse meg",
+    en: "Until then, check out",
+  },
+  ordersNotAcceptedThirdLink: {
+    sr: "našu ponudu i upoznajte se sa načinom na koji pripremamo naše proizvode",
+    hu: "kínálatunkat és ismerje meg, hogyan készítjük termékeinket",
+    en: "our offer and learn about how we prepare our products",
+  },
 };
