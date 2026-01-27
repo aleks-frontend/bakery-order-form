@@ -244,7 +244,7 @@
         }
 
         // Update bread type options in existing items
-        document.querySelectorAll("#items .row select").forEach((select) => {
+        document.querySelectorAll("#items .row-container .row select").forEach((select) => {
           const selectedValue = select.value;
           select.innerHTML = "";
           breadTypes.forEach((b) => {
@@ -298,6 +298,9 @@
       function addItem() {
         const container = document.getElementById("items");
 
+        const rowContainer = document.createElement("div");
+        rowContainer.className = "row-container";
+
         const row = document.createElement("div");
         row.className = "row";
 
@@ -320,7 +323,7 @@
         remove.textContent = "✖";
         remove.className = "remove-btn";
         remove.onclick = () => {
-          row.remove();
+          rowContainer.remove();
           calculateTotal();
           updateSubmitButtonState();
         };
@@ -335,7 +338,8 @@
         };
 
         row.append(select, qty, remove);
-        container.appendChild(row);
+        rowContainer.appendChild(row);
+        container.appendChild(rowContainer);
 
         calculateTotal();
         updateSubmitButtonState();
@@ -344,7 +348,7 @@
       function calculateTotal() {
         let total = 0;
 
-        document.querySelectorAll("#items .row").forEach((row) => {
+        document.querySelectorAll("#items .row-container .row").forEach((row) => {
           const select = row.querySelector("select");
           const qty = row.querySelector("input");
           const price = Number(select.selectedOptions[0].dataset.price);
@@ -357,7 +361,7 @@
 
       function updateSubmitButtonState() {
         const submitBtn = document.querySelector('button[type="submit"]');
-        const itemCount = document.querySelectorAll("#items .row").length;
+        const itemCount = document.querySelectorAll("#items .row-container").length;
         submitBtn.disabled = itemCount === 0;
       }
 
@@ -503,7 +507,7 @@
         .addEventListener("submit", async (e) => {
           e.preventDefault();
 
-          const items = [...document.querySelectorAll("#items .row")].map(
+          const items = [...document.querySelectorAll("#items .row-container .row")].map(
             (row) => {
               const select = row.querySelector("select");
               const qty = Number(row.querySelector("input").value);

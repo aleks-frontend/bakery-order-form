@@ -107,10 +107,26 @@ textarea:focus {
   box-shadow: var(--shadow-focus);
 }
 
+.row-container {
+  padding: 8px;
+  background: rgb(250, 248, 244);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.row-container:last-child {
+  margin-bottom: 0;
+}
+
+.row-container input,
+.row-container select {
+  margin-top: 0;
+}
+
 .row {
   display: flex;
   gap: 0.75rem;
-  margin-top: 0.75rem;
   align-items: flex-end;
 }
 
@@ -452,8 +468,19 @@ button[type="submit"].loading::after {
    ============================================ */
 @media (max-width: 600px) {
   .row {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: flex-end;
+  }
+
+  .row input[type="number"] {
+    flex: 0 0 60px;
+    max-width: 60px;
+  }
+
+  .row .remove-btn {
+    flex: 0 0 40px;
+    max-width: 40px;
+    padding: 0.55rem 0.5rem;
   }
 
   .language-selector {
