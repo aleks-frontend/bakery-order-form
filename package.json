@@ -19,6 +19,7 @@
     "react-hot-toast": "^2.4.1",
     "react-i18next": "^15.0.2",
     "react-modal": "^3.16.1",
+    "react-select": "^5.10.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {
