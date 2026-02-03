@@ -25,14 +25,7 @@ export function OrderItems({ control, breadTypes }: OrderItemsProps) {
 
   return (
     <>
-      <h3 className="mt-6 text-left font-semibold">{t("Ordered bread")}</h3>
-      <button
-        type="button"
-        onClick={handleAdd}
-        className="mt-3 rounded-xl border-none py-2.5 px-4 text-[0.95rem] font-medium cursor-pointer transition-colors bg-bakery-primary text-white hover:bg-bakery-primary-hover hover:-translate-y-px active:translate-y-0 add-article"
-      >
-        {t("+ Add bread")}
-      </button>
+      <h3 className="mt-6 text-left font-semibold">{t("Ordered articles")}</h3>
       <div className="space-y-3 mt-3">
         {fields.map(
           (
@@ -49,6 +42,13 @@ export function OrderItems({ control, breadTypes }: OrderItemsProps) {
           )
         )}
       </div>
+      <button
+        type="button"
+        onClick={handleAdd}
+        className="mt-3 rounded-xl border-none py-2.5 px-4 text-[0.95rem] font-medium cursor-pointer transition-colors bg-bakery-primary text-white hover:bg-bakery-primary-hover hover:-translate-y-px active:translate-y-0 add-article"
+      >
+        {t("+ Add bread")}
+      </button>
     </>
   );
 }

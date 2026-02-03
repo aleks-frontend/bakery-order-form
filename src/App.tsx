@@ -1,13 +1,13 @@
-import { useTranslation } from 'react-i18next'
-import { useBreadTypes } from '@/hooks/useBreadTypes'
-import { LanguageSelector } from '@/components/LanguageSelector'
-import { OrderStatusBanner } from '@/components/OrderStatusBanner'
-import { OrderForm } from '@/components/OrderForm'
-import { Spinner } from '@/components/Spinner'
+import { useTranslation } from "react-i18next";
+import { useBreadTypes } from "@/hooks/useBreadTypes";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { OrderStatusBanner } from "@/components/OrderStatusBanner";
+import { OrderForm } from "@/components/OrderForm";
+import { Spinner } from "@/components/Spinner";
 
 function App() {
-  const { t } = useTranslation()
-  const { breadTypes, acceptingOrders, isLoading } = useBreadTypes()
+  const { t } = useTranslation();
+  const { breadTypes, acceptingOrders, isLoading } = useBreadTypes();
 
   return (
     <>
@@ -21,21 +21,17 @@ function App() {
         />
       </div>
 
-      <h2 className="mt-0 text-center text-2xl font-semibold">
-        {t('Order Fresh Bread')}
-      </h2>
-
-      <OrderStatusBanner show={!acceptingOrders} />
+      <OrderStatusBanner show={false} />
 
       {isLoading ? (
         <div className="flex justify-center items-center py-8">
           <Spinner />
         </div>
       ) : (
-        <OrderForm breadTypes={breadTypes} acceptingOrders={acceptingOrders} />
+        <OrderForm breadTypes={breadTypes} acceptingOrders={true} />
       )}
     </>
-  )
+  );
 }
 
-export default App
+export default App;

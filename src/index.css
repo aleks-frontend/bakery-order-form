@@ -7,6 +7,6 @@
     @apply box-border;
   }
   body {
-    @apply font-sans bg-bakery-bg text-bakery-text m-0 p-8;
+    @apply font-sans bg-bakery-bg text-bakery-text m-0 p-2;
   }
 }

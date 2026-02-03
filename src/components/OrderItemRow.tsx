@@ -79,7 +79,7 @@ export function OrderItemRow({
         <button
           type="button"
           onClick={() => onRemove(index)}
-          className="flex-shrink-0 bg-red-50 text-red-700 border border-red-200 py-2 px-2.5 rounded-xl hover:bg-red-100 remove-btn"
+          className="flex-shrink-0 text-red-700 py-2 px-2.5 rounded-xl hover:text-red-800 remove-btn"
           aria-label="Remove item"
         >
           ✖

@@ -58,6 +58,7 @@ export function OrderForm({ breadTypes, acceptingOrders }: OrderFormProps) {
 
   const { register, control, watch, handleSubmit, setValue, reset } = form;
   const items = watch("items");
+  const formValues = watch();
 
   useEffect(() => {
     const persisted = loadPersistedCustomer();
@@ -88,7 +89,7 @@ export function OrderForm({ breadTypes, acceptingOrders }: OrderFormProps) {
         total,
       };
     });
-  }, [items, breadTypes]);
+  }, [items, breadTypes, formValues]);
 
   const totalPrice = useMemo(
     () =>
@@ -98,7 +99,7 @@ export function OrderForm({ breadTypes, acceptingOrders }: OrderFormProps) {
           quantity: i.quantity,
         }))
       ),
-    [itemDetails]
+    [itemDetails, formValues]
   );
 
   const buildPayload = (values: OrderFormValues): OrderPayload => {
@@ -123,6 +124,12 @@ export function OrderForm({ breadTypes, acceptingOrders }: OrderFormProps) {
       remark: values.remark?.trim() || null,
     };
   };
+
+  useEffect(() => {
+    if (formValues) {
+      setPendingPayload(buildPayload(formValues));
+    }
+  }, [formValues, itemDetails, totalPrice]);
 
   const onSubmit = (values: OrderFormValues) => {
     savePersistedCustomer({
@@ -169,7 +176,7 @@ export function OrderForm({ breadTypes, acceptingOrders }: OrderFormProps) {
     <>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-bakery-card p-8 rounded-2xl max-w-[720px] mx-auto shadow-xl"
+        className="bg-bakery-card p-4 rounded-2xl max-w-[720px] mx-auto shadow-xl"
       >
         <CustomerFields
           register={register}
