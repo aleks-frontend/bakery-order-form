@@ -22,7 +22,7 @@ export function LanguageSelector() {
   const { i18n, t } = useTranslation();
 
   return (
-    <div className="absolute top-4 right-4 flex gap-2 z-[100]">
+    <div className="flex gap-2 z-[100]">
       {LANGUAGES.map(({ code, titleKey, flag }) => (
         <button
           key={code}
