@@ -37,7 +37,7 @@ export function CustomerFields({
 
   return (
     <>
-      <label className="block mt-4 font-medium">
+      <label className="block font-medium">
         <span className="block">{t("First name")}</span>
         <input
           type="text"

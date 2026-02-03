@@ -1,16 +1,28 @@
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from "react-i18next";
 
 const LANGUAGES = [
-  { code: 'hu' as const, titleKey: 'Hungarian' as const, flag: 'https://flagcdn.com/w20/hu.png' },
-  { code: 'sr' as const, titleKey: 'Serbian' as const, flag: 'https://flagcdn.com/w20/rs.png' },
-  { code: 'en' as const, titleKey: 'English' as const, flag: 'https://flagcdn.com/w20/gb.png' },
-] as const
+  {
+    code: "hu" as const,
+    titleKey: "Hungarian" as const,
+    flag: "https://flagcdn.com/w20/hu.png",
+  },
+  {
+    code: "sr" as const,
+    titleKey: "Serbian" as const,
+    flag: "https://flagcdn.com/w20/rs.png",
+  },
+  {
+    code: "en" as const,
+    titleKey: "English" as const,
+    flag: "https://flagcdn.com/w20/gb.png",
+  },
+] as const;
 
 export function LanguageSelector() {
-  const { i18n, t } = useTranslation()
+  const { i18n, t } = useTranslation();
 
   return (
-    <div className="fixed top-4 right-4 flex gap-2 z-[100]">
+    <div className="absolute top-4 right-4 flex gap-2 z-[100]">
       {LANGUAGES.map(({ code, titleKey, flag }) => (
         <button
           key={code}
@@ -22,9 +34,10 @@ export function LanguageSelector() {
             transition-all duration-200 shadow-sm p-0
             hover:-translate-y-0.5 hover:shadow-md hover:border-bakery-primary
             md:w-9 md:h-9
-            ${i18n.language === code
-              ? 'border-bakery-primary bg-bakery-primary shadow-[0_0_0_3px_rgba(198,134,66,0.2)]'
-              : 'border-bakery-border'
+            ${
+              i18n.language === code
+                ? "border-bakery-primary bg-bakery-primary shadow-[0_0_0_3px_rgba(198,134,66,0.2)]"
+                : "border-bakery-border"
             }
           `}
         >
@@ -36,5 +49,5 @@ export function LanguageSelector() {
         </button>
       ))}
     </div>
-  )
+  );
 }
