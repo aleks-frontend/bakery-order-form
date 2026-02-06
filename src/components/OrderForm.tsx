@@ -21,7 +21,7 @@ interface OrderFormProps {
 }
 
 const defaultItem = (
-  firstBreadId: string
+  firstBreadId: string,
 ): { breadId: string; quantity: number } => ({
   breadId: firstBreadId,
   quantity: 1,
@@ -31,10 +31,9 @@ export function OrderForm({ breadTypes, acceptingOrders }: OrderFormProps) {
   const { t } = useTranslation();
   const { load: loadPersistedCustomer, save: savePersistedCustomer } =
     usePersistedCustomer();
-  const [pendingPayload, setPendingPayload] = useState<OrderPayload | null>(
-    null
-  );
   const [modalOpen, setModalOpen] = useState(false);
+  const [updateTrigger, setUpdateTrigger] = useState(0);
+  const onItemsUpdate = () => setUpdateTrigger((n) => n + 1);
 
   const firstBreadId = breadTypes[0]?.id ?? "";
 
@@ -89,7 +88,7 @@ export function OrderForm({ breadTypes, acceptingOrders }: OrderFormProps) {
         total,
       };
     });
-  }, [items, breadTypes, formValues]);
+  }, [items, breadTypes, updateTrigger]);
 
   const totalPrice = useMemo(
     () =>
@@ -97,9 +96,9 @@ export function OrderForm({ breadTypes, acceptingOrders }: OrderFormProps) {
         itemDetails.map((i) => ({
           unitPrice: i.unitPrice,
           quantity: i.quantity,
-        }))
+        })),
       ),
-    [itemDetails, formValues]
+    [itemDetails],
   );
 
   const buildPayload = (values: OrderFormValues): OrderPayload => {
@@ -125,12 +124,6 @@ export function OrderForm({ breadTypes, acceptingOrders }: OrderFormProps) {
     };
   };
 
-  useEffect(() => {
-    if (formValues) {
-      setPendingPayload(buildPayload(formValues));
-    }
-  }, [formValues, itemDetails, totalPrice]);
-
   const onSubmit = (values: OrderFormValues) => {
     savePersistedCustomer({
       firstName: values.firstName,
@@ -139,14 +132,11 @@ export function OrderForm({ breadTypes, acceptingOrders }: OrderFormProps) {
       phone: values.phone,
       location: values.location,
     });
-    const payload = buildPayload(values);
-    setPendingPayload(payload);
     setModalOpen(true);
   };
 
   const onModalClose = () => {
     setModalOpen(false);
-    setPendingPayload(null);
   };
 
   const onOrderSuccess = () => {
@@ -164,8 +154,9 @@ export function OrderForm({ breadTypes, acceptingOrders }: OrderFormProps) {
       items: [defaultItem(firstBreadId)],
     });
     setModalOpen(false);
-    setPendingPayload(null);
   };
+
+  const modalPayload = modalOpen ? buildPayload(formValues) : null;
 
   const hasItems = Array.isArray(items) && items.length > 0;
   const submitDisabled = !hasItems || !acceptingOrders;
@@ -184,7 +175,11 @@ export function OrderForm({ breadTypes, acceptingOrders }: OrderFormProps) {
           errors={form.formState.errors}
         />
 
-        <OrderItems control={control} breadTypes={breadTypes} />
+        <OrderItems
+          control={control}
+          breadTypes={breadTypes}
+          onUpdate={onItemsUpdate}
+        />
 
         <div className="mt-6 text-right text-xl font-semibold">
           <span>{t("Total price:")}</span>
@@ -214,7 +209,7 @@ export function OrderForm({ breadTypes, acceptingOrders }: OrderFormProps) {
       <OrderSummaryModal
         isOpen={modalOpen}
         onClose={onModalClose}
-        payload={pendingPayload}
+        payload={modalPayload}
         onSuccess={onOrderSuccess}
       />
     </>

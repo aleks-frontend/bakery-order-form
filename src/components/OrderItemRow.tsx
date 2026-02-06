@@ -14,6 +14,7 @@ interface OrderItemRowProps {
   breadTypes: BreadType[];
   index: number;
   onRemove: UseFieldArrayRemove;
+  onUpdate: () => void;
 }
 
 export function OrderItemRow({
@@ -21,6 +22,7 @@ export function OrderItemRow({
   breadTypes,
   index,
   onRemove,
+  onUpdate,
 }: OrderItemRowProps) {
   const { t } = useTranslation();
   const breadOptions = useMemo(
@@ -44,7 +46,10 @@ export function OrderItemRow({
               value={
                 breadOptions.find((o) => o.value === breadField.value) ?? null
               }
-              onChange={(opt) => breadField.onChange(opt?.value ?? "")}
+              onChange={(opt) => {
+                breadField.onChange(opt?.value ?? "");
+                onUpdate();
+              }}
               onBlur={breadField.onBlur}
               ref={breadField.ref}
               className="flex-[2] mt-0 react-select-container"
@@ -69,9 +74,10 @@ export function OrderItemRow({
               type="number"
               min={1}
               {...qtyField}
-              onChange={(e) =>
-                qtyField.onChange(parseInt(e.target.value, 10) || 1)
-              }
+              onChange={(e) => {
+                qtyField.onChange(parseInt(e.target.value, 10) || 1);
+                onUpdate();
+              }}
               className="w-12 min-w-[3rem] sm:w-14 sm:min-w-0 h-[42px] mt-0 py-0 px-2 sm:px-3 rounded-[10px] border border-bakery-border text-[0.95rem] focus:outline-none focus:border-bakery-primary focus:shadow-focus bg-white flex-shrink-0 box-border"
             />
           )}

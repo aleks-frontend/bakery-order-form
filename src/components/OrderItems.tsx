@@ -9,9 +9,10 @@ import { OrderItemRow } from "./OrderItemRow";
 interface OrderItemsProps {
   control: Control<OrderFormValues>;
   breadTypes: BreadType[];
+  onUpdate: () => void;
 }
 
-export function OrderItems({ control, breadTypes }: OrderItemsProps) {
+export function OrderItems({ control, breadTypes, onUpdate }: OrderItemsProps) {
   const { t } = useTranslation();
   const { fields, append, remove } = useFieldArray({
     control,
@@ -38,6 +39,7 @@ export function OrderItems({ control, breadTypes }: OrderItemsProps) {
               breadTypes={breadTypes}
               index={index}
               onRemove={remove}
+              onUpdate={onUpdate}
             />
           )
         )}
