@@ -27,7 +27,7 @@
   "Failed to submit order. Please try again.": "A rendelés elküldése sikertelen. Kérjük, próbálja újra.",
   "An error occurred. Please try again.": "Hiba történt. Kérjük, próbálja újra.",
   "We are currently not accepting new orders for this week.": "Jelenleg nem fogadunk új rendeléseket erre a hétre.",
-  "New orders will be available next week 💛": "Az új rendelések a következő héten lesznek elérhetők 💛",
+  "New orders will be available from this Friday, {{date}} 💛": "Az új rendelések ettől a péntektől ({{date}}) lesznek elérhetők 💛",
   "Until then, check out": "Addig tekintse meg",
   "our offer and learn about how we prepare our products": "kínálatunkat és ismerje meg, hogyan készítjük termékeinket",
   "Bakery Order": "Bakery Order",

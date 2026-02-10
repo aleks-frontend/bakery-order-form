@@ -27,7 +27,7 @@
   "Failed to submit order. Please try again.": "Neuspešno slanje narudžbe. Molimo pokušajte ponovo.",
   "An error occurred. Please try again.": "Došlo je do greške. Molimo pokušajte ponovo.",
   "We are currently not accepting new orders for this week.": "Trenutno ne primamo nove narudžbine za ovu nedelju.",
-  "New orders will be available next week 💛": "Nove porudžbine biće dostupne sledeće nedelje 💛",
+  "New orders will be available from this Friday, {{date}} 💛": "Nove porudžbine biće dostupne od ovog petka, {{date}} 💛",
   "Until then, check out": "Do tada, pogledajte",
   "our offer and learn about how we prepare our products": "našu ponudu i upoznajte se sa načinom na koji pripremamo naše proizvode",
   "Bakery Order": "Bakery Order",
