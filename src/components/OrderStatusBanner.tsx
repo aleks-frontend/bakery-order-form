@@ -7,7 +7,7 @@ interface OrderStatusBannerProps {
   show: boolean;
 }
 
-function getThisFridayDateString(): string {
+function getThisFridayDateString(isHun: boolean): string {
   const today = new Date();
   const day = today.getDay(); // 0 (Sun) ... 5 (Fri) ... 6 (Sat)
   const diff = (5 - day + 7) % 7; // 5 is Friday; 0 means today if it's Friday
@@ -19,12 +19,19 @@ function getThisFridayDateString(): string {
   const mm = String(friday.getMonth() + 1).padStart(2, "0");
   const yyyy = friday.getFullYear();
 
+  if (isHun) {
+    // Hungarian format: YYYY-MM-DD
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  // Default format: DD.MM.YYYY.
   return `${dd}.${mm}.${yyyy}.`;
 }
 
 export function OrderStatusBanner({ show }: OrderStatusBannerProps) {
   const { t, i18n } = useTranslation();
-  const fridayDate = getThisFridayDateString();
+  const isHun = i18n.language === "hu";
+  const fridayDate = getThisFridayDateString(isHun);
   const websiteUrl = i18n.language === "hu" ? WEBSITE_URL_HU : WEBSITE_URL_RS;
 
   if (!show) return null;
