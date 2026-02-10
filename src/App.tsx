@@ -7,7 +7,7 @@ import { Spinner } from "@/components/Spinner";
 
 function App() {
   const { t } = useTranslation();
-  const { breadTypes, isLoading } = useBreadTypes();
+  const { breadTypes, isLoading, acceptingOrders } = useBreadTypes();
 
   return (
     <>
@@ -30,16 +30,14 @@ function App() {
         </div>
       </header>
 
-      {/* TODO: Add order status banner when acceptingOrders is false */}
-      <OrderStatusBanner show={false} />
+      <OrderStatusBanner show={!acceptingOrders} />
 
       {isLoading ? (
         <div className="flex justify-center items-center py-8">
           <Spinner />
         </div>
       ) : (
-        // TODO: Add acceptingOrders logic
-        <OrderForm breadTypes={breadTypes} acceptingOrders={true} />
+        <OrderForm breadTypes={breadTypes} acceptingOrders={acceptingOrders} />
       )}
     </>
   );
