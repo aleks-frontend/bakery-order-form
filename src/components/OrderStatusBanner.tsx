@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 
-const WEBSITE_URL = "https://lisztrapszodia.in.rs/index.html";
+const WEBSITE_URL_HU = "https://lisztrapszodia.in.rs/index.html";
+const WEBSITE_URL_RS = "https://lisztrapszodia.in.rs/index-rs.html";
 
 interface OrderStatusBannerProps {
   show: boolean;
@@ -22,8 +23,9 @@ function getThisFridayDateString(): string {
 }
 
 export function OrderStatusBanner({ show }: OrderStatusBannerProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const fridayDate = getThisFridayDateString();
+  const websiteUrl = i18n.language === "hu" ? WEBSITE_URL_HU : WEBSITE_URL_RS;
 
   if (!show) return null;
 
@@ -41,7 +43,7 @@ export function OrderStatusBanner({ show }: OrderStatusBannerProps) {
       <div className="mt-3">
         {t("Until then, check out")}{" "}
         <a
-          href={WEBSITE_URL}
+          href={websiteUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-900 underline font-bold transition-opacity hover:opacity-80"
