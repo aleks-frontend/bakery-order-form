@@ -20,8 +20,8 @@ function getThisFridayDateString(isHun: boolean): string {
   const yyyy = friday.getFullYear();
 
   if (isHun) {
-    // Hungarian format: YYYY-MM-DD
-    return `${yyyy}-${mm}-${dd}`;
+    // Hungarian format: YYYY.MM.DD.
+    return `${yyyy}.${mm}.${dd}`;
   }
 
   // Default format: DD.MM.YYYY.
