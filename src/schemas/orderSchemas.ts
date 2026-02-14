@@ -55,6 +55,7 @@ export const orderPayloadSchema = z.object({
   submittedAt: z.string(),
   location: z.string(),
   remark: z.string().nullable(),
+  language: z.string(),
 })
 
 export const orderSubmitResponseSchema = z.object({

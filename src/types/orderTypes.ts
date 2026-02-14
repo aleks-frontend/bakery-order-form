@@ -31,6 +31,7 @@ export interface OrderPayload {
   submittedAt: string
   location: string
   remark: string | null
+  language: string
 }
 
 export interface OrderSubmitResponse {

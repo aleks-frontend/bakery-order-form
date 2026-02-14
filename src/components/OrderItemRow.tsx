@@ -73,10 +73,18 @@ export function OrderItemRow({
             <input
               type="number"
               min={1}
-              {...qtyField}
+              value={qtyField.value === 0 ? "" : qtyField.value}
               onChange={(e) => {
-                qtyField.onChange(parseInt(e.target.value, 10) || 1);
+                const v = parseInt(e.target.value, 10);
+                qtyField.onChange(isNaN(v) || v < 1 ? 0 : v);
                 onUpdate();
+              }}
+              onBlur={() => {
+                if (qtyField.value === 0) {
+                  qtyField.onChange(1);
+                  onUpdate();
+                }
+                qtyField.onBlur();
               }}
               className="w-12 min-w-[3rem] sm:w-14 sm:min-w-0 h-[42px] mt-0 py-0 px-2 sm:px-3 rounded-[10px] border border-bakery-border text-[0.95rem] focus:outline-none focus:border-bakery-primary focus:shadow-focus bg-white flex-shrink-0 box-border"
             />

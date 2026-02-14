@@ -28,7 +28,7 @@ const defaultItem = (
 });
 
 export function OrderForm({ breadTypes, acceptingOrders }: OrderFormProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { load: loadPersistedCustomer, save: savePersistedCustomer } =
     usePersistedCustomer();
   const [modalOpen, setModalOpen] = useState(false);
@@ -79,11 +79,12 @@ export function OrderForm({ breadTypes, acceptingOrders }: OrderFormProps) {
     return items.map((item) => {
       const bread = findBreadById(breadTypes, item.breadId);
       const unitPrice = bread?.price ?? 0;
-      const total = getItemTotal(unitPrice, item.quantity);
+      const quantity = Math.max(1, item.quantity);
+      const total = getItemTotal(unitPrice, quantity);
       return {
         breadId: item.breadId,
         breadName: bread?.name ?? "",
-        quantity: item.quantity,
+        quantity,
         unitPrice,
         total,
       };
@@ -121,6 +122,7 @@ export function OrderForm({ breadTypes, acceptingOrders }: OrderFormProps) {
       submittedAt: new Date().toISOString(),
       location: values.location,
       remark: values.remark?.trim() || null,
+      language: i18n.language,
     };
   };
 
