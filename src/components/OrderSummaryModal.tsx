@@ -26,7 +26,7 @@ export function OrderSummaryModal({
   const { t } = useTranslation();
   const { submitOrder, isPending } = useSubmitOrder({
     onSuccess: () => {
-      toast.success(t("Order submitted successfully!"));
+      toast.success(t("✅ Order submitted successfully!"));
       onSuccess();
     },
     onError: (message) => {
