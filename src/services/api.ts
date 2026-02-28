@@ -40,7 +40,14 @@ export async function submitOrder(payload: OrderPayload): Promise<OrderSubmitRes
   })
   const json: unknown = await res.json()
   if (!res.ok) {
-    throw new Error('Failed to submit order')
+    const message =
+      typeof json === 'object' &&
+      json !== null &&
+      'message' in json &&
+      typeof (json as { message?: unknown }).message === 'string'
+        ? (json as { message: string }).message
+        : 'Failed to submit order'
+    throw new Error(message)
   }
   return json as OrderSubmitResponse
 }

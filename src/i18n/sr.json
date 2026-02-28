@@ -26,6 +26,7 @@
   "✅ Order submitted successfully!": "✅ Narudžba je uspešno poslata!",
   "Failed to submit order. Please try again.": "Neuspešno slanje narudžbe. Molimo pokušajte ponovo.",
   "An error occurred. Please try again.": "Došlo je do greške. Molimo pokušajte ponovo.",
+  "Orders for this week are closed. New orders open on Friday.": "Narudžbine za ovu nedelju su zatvorene. Nove narudžbine od petka.",
   "We are currently not accepting new orders for this week.": "Trenutno ne primamo nove narudžbine za ovu nedelju.",
   "New orders will be available from this Friday, {{date}} 💛": "Nove porudžbine biće dostupne od ovog petka, {{date}} 💛",
   "Until then, check out": "Do tada, pogledajte",

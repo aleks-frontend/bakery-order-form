@@ -26,6 +26,7 @@
   "✅ Order submitted successfully!": "✅ Order submitted successfully!",
   "Failed to submit order. Please try again.": "Failed to submit order. Please try again.",
   "An error occurred. Please try again.": "An error occurred. Please try again.",
+  "Orders for this week are closed. New orders open on Friday.": "Orders for this week are closed. New orders open on Friday.",
   "We are currently not accepting new orders for this week.": "We are currently not accepting new orders for this week.",
   "New orders will be available from this Friday, {{date}} 💛": "New orders will be available from this Friday, {{date}} 💛",
   "Until then, check out": "Until then, check out",
