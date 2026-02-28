@@ -29,15 +29,15 @@ export function OrderSummaryModal({
       toast.success(t("Order submitted successfully!"));
       onSuccess();
     },
-    onError: () => {
-      toast.error(t("Failed to submit order. Please try again."));
+    onError: (message) => {
+      toast.error(t(message));
     },
   });
 
   const handleConfirm = () => {
     if (!payload) return;
     submitOrder(payload).catch(() => {
-      toast.error(t("An error occurred. Please try again."));
+      // Error already shown via onError with server message or fallback
     });
   };
 
@@ -50,7 +50,7 @@ export function OrderSummaryModal({
       isOpen={isOpen}
       onRequestClose={onClose}
       contentLabel={t("Confirm Order")}
-      className="bg-bakery-card rounded-2xl p-8 max-w-[500px] w-[90%] max-h-[90vh] overflow-y-auto shadow-2xl mx-auto mt-[10vh] outline-none"
+      className="bg-bakery-card rounded-2xl p-8 max-w-[500px] w-[90%] max-h-[90vh] overflow-y-auto shadow-2xl mx-auto outline-none"
       overlayClassName="fixed inset-0 bg-black/50 z-[1000] flex items-center justify-center p-4"
       shouldCloseOnOverlayClick={!isPending}
       shouldCloseOnEsc={!isPending}
