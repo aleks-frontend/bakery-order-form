@@ -7,10 +7,17 @@ interface OrderStatusBannerProps {
   show: boolean;
 }
 
-function getThisFridayDateString(isHun: boolean): string {
+/** Set to false after Easter 2026 / fixed reopen date — banner date then uses `getNextFridayDateLabel` again. */
+const USE_FIXED_EASTER_2026_REOPEN_DATE = true;
+
+/**
+ * Next Friday from today, formatted for the banner (hu: YYYY.MM.DD., else DD.MM.YYYY.).
+ * Kept in use via flag above; do not delete while TEMP Easter messaging is active.
+ */
+function getNextFridayDateLabel(isHun: boolean): string {
   const today = new Date();
-  const day = today.getDay(); // 0 (Sun) ... 5 (Fri) ... 6 (Sat)
-  const diff = (5 - day + 7) % 7; // 5 is Friday; 0 means today if it's Friday
+  const day = today.getDay(); // 0 Sun … 5 Fri … 6 Sat
+  const diff = (5 - day + 7) % 7; // days until Friday (0 if today is Friday)
 
   const friday = new Date(today);
   friday.setDate(today.getDate() + diff);
@@ -20,18 +27,24 @@ function getThisFridayDateString(isHun: boolean): string {
   const yyyy = friday.getFullYear();
 
   if (isHun) {
-    // Hungarian format: YYYY.MM.DD.
-    return `${yyyy}.${mm}.${dd}`;
+    return `${yyyy}.${mm}.${dd}.`;
   }
-
-  // Default format: DD.MM.YYYY.
   return `${dd}.${mm}.${yyyy}.`;
+}
+
+/** TEMP (Easter 2026): fixed reopen Saturday 11 Apr — remove when `USE_FIXED_EASTER_2026_REOPEN_DATE` is false. */
+function getTempEasterReopenDateLabel(lang: string): string {
+  if (lang === "hu") return "2026. április 11., szombat";
+  if (lang === "en") return "Saturday, 11 April 2026";
+  return "subote, 11.04.2026-e";
 }
 
 export function OrderStatusBanner({ show }: OrderStatusBannerProps) {
   const { t, i18n } = useTranslation();
   const isHun = i18n.language === "hu";
-  const fridayDate = getThisFridayDateString(isHun);
+  const reopenDate = USE_FIXED_EASTER_2026_REOPEN_DATE
+    ? getTempEasterReopenDateLabel(i18n.language)
+    : getNextFridayDateLabel(isHun);
   const websiteUrl = i18n.language === "hu" ? WEBSITE_URL_HU : WEBSITE_URL_RS;
 
   if (!show) return null;
@@ -39,13 +52,11 @@ export function OrderStatusBanner({ show }: OrderStatusBannerProps) {
   return (
     <div className="bg-blue-50 border-2 border-blue-500 rounded-xl py-5 px-6 my-6 mx-auto max-w-[720px] text-left text-blue-900 font-light text-base leading-relaxed shadow-md">
       <div>
-        {t("We are currently not accepting new orders for this week.")}
+        {t("Due to the Easter holidays we will not be taking orders until {{date}}.", {
+          date: reopenDate,
+        })}
         <br />
-        <strong className="font-bold">
-          {t("New orders will be available from this Friday, {{date}} 💛", {
-            date: fridayDate,
-          })}
-        </strong>
+        {t("Happy Easter — see you soon! 🐣")}
       </div>
       <div className="mt-3">
         {t("Until then, check out")}{" "}

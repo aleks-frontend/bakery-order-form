@@ -29,6 +29,8 @@
   "Orders for this week are closed. New orders open on Friday.": "Az e heti rendelések lezárva. Új rendelések péntektől.",
   "We are currently not accepting new orders for this week.": "Jelenleg nem fogadunk új rendeléseket erre a hétre.",
   "New orders will be available from this Friday, {{date}} 💛": "Az új rendelések péntektől ({{date}}) lesznek elérhetők 💛",
+  "Due to the Easter holidays we will not be taking orders until {{date}}.": "A húsvéti ünnepek miatt {{date}} napjáig nem fogadunk rendeléseket.",
+  "Happy Easter — see you soon! 🐣": "Boldog Húsvétot — találkozunk! 🐣",
   "Until then, check out": "Addig tekintse meg",
   "our offer and learn about how we prepare our products": "kínálatunkat és ismerje meg, hogyan készítjük termékeinket",
   "Bakery Order": "Bakery Order",
