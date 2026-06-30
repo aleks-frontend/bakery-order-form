@@ -29,11 +29,11 @@ This workflow provides a GET endpoint that returns available bread types for the
 
 ```json
 [
-  { "id": "white_500", "name": "White bread 500g", "price": 120 },
-  { "id": "rye_700", "name": "Rye bread 700g", "price": 180 },
-  { "id": "whole_wheat_500", "name": "Whole wheat bread 500g", "price": 140 },
-  { "id": "multigrain_700", "name": "Multigrain bread 700g", "price": 200 },
-  { "id": "sourdough_500", "name": "Sourdough bread 500g", "price": 160 }
+  { "id": "white_500", "name": "White bread 500g", "price": 120, "available": true },
+  { "id": "rye_700", "name": "Rye bread 700g", "price": 180, "available": true },
+  { "id": "whole_wheat_500", "name": "Whole wheat bread 500g", "price": 140, "available": false },
+  { "id": "multigrain_700", "name": "Multigrain bread 700g", "price": 200, "available": true },
+  { "id": "sourdough_500", "name": "Sourdough bread 500g", "price": 160, "available": true }
 ]
 ```
 
@@ -43,4 +43,5 @@ You can modify the bread types in the Code node by editing the JavaScript code. 
 - `id`: Unique identifier (string)
 - `name`: Display name (string)
 - `price`: Price in RSD (number)
+- `available`: Whether the item is currently available for ordering (boolean, defaults to `true` if omitted)
 

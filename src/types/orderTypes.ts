@@ -2,6 +2,7 @@ export interface BreadType {
   id: string
   name: string
   price: number
+  available: boolean
 }
 
 export interface BreadTypesResponse {

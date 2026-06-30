@@ -4,6 +4,7 @@ export const breadTypeSchema = z.object({
   id: z.string(),
   name: z.string(),
   price: z.number().min(0),
+  available: z.boolean().default(true),
 })
 
 export const breadTypesResponseSchema = z.object({

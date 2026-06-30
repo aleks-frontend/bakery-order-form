@@ -3,8 +3,8 @@ import { fetchBreadTypes } from '@/services/api'
 import type { BreadType } from '@/types/orderTypes'
 
 const FALLBACK_BREAD_TYPES: BreadType[] = [
-  { id: 'white_500', name: 'White bread 500g', price: 120 },
-  { id: 'rye_700', name: 'Rye bread 700g', price: 180 },
+  { id: 'white_500', name: 'White bread 500g', price: 120, available: true },
+  { id: 'rye_700', name: 'Rye bread 700g', price: 180, available: true },
 ]
 
 export function useBreadTypes() {
@@ -16,8 +16,9 @@ export function useBreadTypes() {
   })
 
   const acceptingOrders = query.isError ? true : (query.data?.acceptingOrders ?? true)
-  const breadTypes: BreadType[] =
+  const rawBreadTypes: BreadType[] =
     query.data?.data ?? (query.isError ? FALLBACK_BREAD_TYPES : [])
+  const breadTypes = rawBreadTypes.filter((b) => b.available)
 
   return {
     breadTypes,
