@@ -40,7 +40,7 @@ function App() {
       <OrderStatusBanner
         show={!effectiveAcceptingOrders}
         reopenDate={isOnHoliday ? HOLIDAY_UNTIL : undefined}
-        holidayMessage={isOnHoliday ? t("We're on our summer holiday! ☀️🏖️") : undefined}
+        holidayMessage={isOnHoliday ? t("Our ovens are taking a summer break — back soon with fresh loaves! ☀️🏖️") : undefined}
       />
 
       {isLoading ? (
