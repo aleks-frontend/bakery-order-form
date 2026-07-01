@@ -5,9 +5,16 @@ import { OrderStatusBanner } from "@/components/OrderStatusBanner";
 import { OrderForm } from "@/components/OrderForm";
 import { Spinner } from "@/components/Spinner";
 
+// Set to a future Date when baker is on holiday, null otherwise.
+// Use the /baker-holiday skill to update this.
+const HOLIDAY_UNTIL: Date | null = new Date("2026-07-18");
+
 function App() {
   const { t } = useTranslation();
   const { breadTypes, isLoading, acceptingOrders } = useBreadTypes();
+
+  const isOnHoliday = HOLIDAY_UNTIL !== null && new Date() < HOLIDAY_UNTIL;
+  const effectiveAcceptingOrders = !isOnHoliday && acceptingOrders;
 
   return (
     <>
@@ -30,14 +37,18 @@ function App() {
         </div>
       </header>
 
-      <OrderStatusBanner show={!acceptingOrders} />
+      <OrderStatusBanner
+        show={!effectiveAcceptingOrders}
+        reopenDate={isOnHoliday ? HOLIDAY_UNTIL : undefined}
+        holidayMessage={isOnHoliday ? t("We're on our summer holiday! ☀️🏖️") : undefined}
+      />
 
       {isLoading ? (
         <div className="flex justify-center items-center py-8">
           <Spinner />
         </div>
       ) : (
-        <OrderForm breadTypes={breadTypes} acceptingOrders={acceptingOrders} />
+        <OrderForm breadTypes={breadTypes} acceptingOrders={effectiveAcceptingOrders} />
       )}
     </>
   );

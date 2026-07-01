@@ -5,43 +5,45 @@ const WEBSITE_URL_RS = "https://lisztrapszodia.in.rs/index-rs.html";
 
 interface OrderStatusBannerProps {
   show: boolean;
+  /** Pass a Date when baker is on holiday to show a custom reopen date instead of next Saturday. */
+  reopenDate?: Date;
+  /** Optional message shown above the reopen date line, e.g. a holiday announcement. */
+  holidayMessage?: string;
 }
 
-/**
- * Next Saturday from today, formatted for the banner (hu: YYYY.MM.DD., else DD.MM.YYYY.).
- */
-function getNextSaturdayDateLabel(isHun: boolean): string {
-  const today = new Date();
-  const day = today.getDay(); // 0 Sun … 5 Fri … 6 Sat
-  const diff = (6 - day + 7) % 7; // days until Saturday (0 if today is Saturday)
+function formatDate(date: Date, isHun: boolean): string {
+  const dd = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const yyyy = date.getFullYear();
+  return isHun ? `${yyyy}.${mm}.${dd}.` : `${dd}.${mm}.${yyyy}.`;
+}
 
+function getNextSaturdayDate(): Date {
+  const today = new Date();
+  const diff = (6 - today.getDay() + 7) % 7;
   const saturday = new Date(today);
   saturday.setDate(today.getDate() + diff);
-
-  const dd = String(saturday.getDate()).padStart(2, "0");
-  const mm = String(saturday.getMonth() + 1).padStart(2, "0");
-  const yyyy = saturday.getFullYear();
-
-  if (isHun) {
-    return `${yyyy}.${mm}.${dd}.`;
-  }
-  return `${dd}.${mm}.${yyyy}.`;
+  return saturday;
 }
 
-export function OrderStatusBanner({ show }: OrderStatusBannerProps) {
+export function OrderStatusBanner({ show, reopenDate, holidayMessage }: OrderStatusBannerProps) {
   const { t, i18n } = useTranslation();
   const isHun = i18n.language === "hu";
-  const reopenDate = getNextSaturdayDateLabel(isHun);
+  const date = reopenDate ?? getNextSaturdayDate();
+  const dateLabel = formatDate(date, isHun);
   const websiteUrl = i18n.language === "hu" ? WEBSITE_URL_HU : WEBSITE_URL_RS;
 
   if (!show) return null;
 
   return (
     <div className="bg-blue-50 border-2 border-blue-500 rounded-xl py-5 px-6 my-6 mx-auto max-w-[720px] text-left text-blue-900 font-light text-base leading-relaxed shadow-md">
+      {holidayMessage && (
+        <div className="mb-3 font-semibold text-lg">{holidayMessage}</div>
+      )}
       <div>
-        {t("New orders will be available from this Saturday, {{date}} 💛", {
-          date: reopenDate,
-        })}
+        {reopenDate
+          ? t("New orders will be available from {{date}} 💛", { date: dateLabel })
+          : t("New orders will be available from this Saturday, {{date}} 💛", { date: dateLabel })}
       </div>
       <div className="mt-3">
         {t("Until then, check out")}{" "}
